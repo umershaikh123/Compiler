@@ -6,7 +6,7 @@ class Lexer {
     this.inputFilePath = inputFilePath;
     this.outputFilePath = outputFilePath;
     this.classification = {
-      'DT': ['int', 'char', 'double'],
+      'DT': ['int', 'char', 'double' , 'string' , 'char'],
       'IF': ['if'],
       'WHILE': ['while'],
       'DO': ['do'],
@@ -83,9 +83,6 @@ class Lexer {
         return classPart;
       }
     }
-
-
-
 
     // Check if the token is an identifier based on the rules
     if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(word)) {
