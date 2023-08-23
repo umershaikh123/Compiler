@@ -75,23 +75,41 @@ class Lexer {
     return 'identifier';
   }
 
+  // tokenize() {
+  //   const inputFileContent = fs.readFileSync(this.inputFilePath, 'utf-8');
+  //   const lines = inputFileContent.split(/\r?\n/);
+  //   console.log("Lines : " ,lines , "\n" );
+
+  //   for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
+  //     const line = lines[lineNumber].trim();
+  //     const words = line.split(/\s+/);
+  //     console.log("line : " ,line , "\n" );
+  //     console.log("words : " ,words , "\n" );
+
+  //     for (const word of words) {
+  //       const classPart = this.getClassPart(word);
+  //       this.tokens.push({ value: word, class: classPart, line: lineNumber + 1 });
+  //     }
+  //   }
+  //   console.log("tokens" , this.tokens);
+  // }
   tokenize() {
     const inputFileContent = fs.readFileSync(this.inputFilePath, 'utf-8');
     const lines = inputFileContent.split(/\r?\n/);
-    console.log("Lines : " ,lines , "\n" );
 
     for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
       const line = lines[lineNumber].trim();
-      const words = line.split(/\s+/);
-      console.log("line : " ,line , "\n" );
-      console.log("words : " ,words , "\n" );
+      const tokensInLine = line.split(/(\s+|;|,|\(|\)|{|}|\[|\]|"|'|\.\s*)/);
 
-      for (const word of words) {
-        const classPart = this.getClassPart(word);
-        this.tokens.push({ value: word, class: classPart, line: lineNumber + 1 });
+      for (const token of tokensInLine) {
+        const cleanedToken = token.trim();
+        if (cleanedToken === '') {
+          continue;
+        }
+        const classPart = this.getClassPart(cleanedToken);
+        this.tokens.push({ value: cleanedToken, class: classPart, line: lineNumber + 1 });
       }
     }
-    console.log("tokens" , this.tokens);
   }
 
 // Token : ( value part , class part , lineNo)
