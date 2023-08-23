@@ -1,3 +1,4 @@
+const { log } = require('console');
 const fs = require('fs');
 
 class Lexer {
@@ -90,11 +91,12 @@ class Lexer {
         this.tokens.push({ value: word, class: classPart, line: lineNumber + 1 });
       }
     }
+    console.log("tokens" , this.tokens);
   }
 
 // Token : ( value part , class part , lineNo)
   writeTokensToFile() {
-    const outputContent = this.tokens.map(token => `(${token.value} , ${token.class}, Line ${token.line})`).join('\n');
+    const outputContent = this.tokens.map(token => `( value part : ${token.value} , class part : ${token.class}, Line No : ${token.line})`).join('\n');
     fs.writeFileSync(this.outputFilePath, outputContent);
     console.log('Lexical analysis completed. Tokens written to', this.outputFilePath);
   }
@@ -103,4 +105,5 @@ class Lexer {
 // Usage
 const lexer = new Lexer('input.txt', 'output.txt');
 lexer.tokenize();
+
 lexer.writeTokensToFile();
