@@ -61,7 +61,11 @@ class Lexer {
       'NOT_CLASS': ['!'],
       'INC_DEC': ['++', '--'],
       '=_CLASS': ['='],
-      'ASSIGN_OP': ['+=', '-=', '*=', '/=', '%=']
+      'ASSIGN_OP': ['+=', '-=', '*=', '/=', '%='],
+      'CATCH': ['catch'],        
+      'THROW': ['throw'],        
+      'THROWS': ['throws'],      
+      'FINALLY': ['finally'],    
     };
     this.tokens = [];
   }
