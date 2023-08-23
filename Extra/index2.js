@@ -55,7 +55,7 @@ class Lexer {
       'DOT': ['.'],
       '*_CLASS': ['*', '/', '%'],
       '+_CLASS': ['+', '-'],
-      '<_CLASS': ['<', '>', '<=', '>=', '!=', '=='],
+      'OP_CLASS': ['<', '>', '<=', '>=', '!=', '=='],
       'AND_CLASS': ['&&'],
       'OR_CLASS': ['||'],
       'NOT_CLASS': ['!'],
@@ -83,10 +83,9 @@ class Lexer {
         return classPart;
       }
     }
-    
-    if (this.reservedWords.has(word)) {
-      return word.toUpperCase();
-    }
+
+
+
 
     // Check if the token is an identifier based on the rules
     if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(word)) {
@@ -98,7 +97,7 @@ class Lexer {
  
 
 
-
+// Breakers
 // \s+: This matches one or more whitespace characters, including spaces, tabs, and newlines.
 // ;: This matches the semicolon character.
 // ,: This matches the comma character.
