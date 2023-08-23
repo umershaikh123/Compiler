@@ -75,24 +75,23 @@ class Lexer {
     return 'identifier';
   }
 
-  // tokenize() {
-  //   const inputFileContent = fs.readFileSync(this.inputFilePath, 'utf-8');
-  //   const lines = inputFileContent.split(/\r?\n/);
-  //   console.log("Lines : " ,lines , "\n" );
+ 
 
-  //   for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
-  //     const line = lines[lineNumber].trim();
-  //     const words = line.split(/\s+/);
-  //     console.log("line : " ,line , "\n" );
-  //     console.log("words : " ,words , "\n" );
 
-  //     for (const word of words) {
-  //       const classPart = this.getClassPart(word);
-  //       this.tokens.push({ value: word, class: classPart, line: lineNumber + 1 });
-  //     }
-  //   }
-  //   console.log("tokens" , this.tokens);
-  // }
+
+// \s+: This matches one or more whitespace characters, including spaces, tabs, and newlines.
+// ;: This matches the semicolon character.
+// ,: This matches the comma character.
+// \(: This matches the opening parenthesis character.
+// \): This matches the closing parenthesis character.
+// {: This matches the opening curly brace character.
+// }: This matches the closing curly brace character.
+// \]: This matches the closing square bracket character.
+// \[: This matches the opening square bracket character.
+// ": This matches the double quotation mark character.
+// ': This matches the single quotation mark character.
+// \.: This matches the period character.
+// \s*: This matches zero or more whitespace characters (spaces, tabs).
   tokenize() {
     const inputFileContent = fs.readFileSync(this.inputFilePath, 'utf-8');
     const lines = inputFileContent.split(/\r?\n/);
