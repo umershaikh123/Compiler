@@ -108,15 +108,18 @@ class Lexer {
 // ': This matches the single quotation mark character.
 // \.: This matches the period character.
 // \s*: This matches zero or more whitespace characters (spaces, tabs).
+
+
   tokenize() {
     const inputFileContent = fs.readFileSync(this.inputFilePath, 'utf-8');
     const lines = inputFileContent.split(/\r?\n/);
+    console.log("Lines = " , lines , "\n");
 
     for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
       const line = lines[lineNumber].trim();
       const tokensInLine = line.split(/(\s+|;|,|\(|\)|{|}|\[|\]|"|'|\.\s*)/);
-      console.log("tokensInLine" , tokensInLine , "\n");
-      console.log();
+      console.log("\'tokensInLine\' = " , tokensInLine , "\n");
+      console.log("\'line\' = " , line , "\n" );
 
       for (const token of tokensInLine) {
         const cleanedToken = token.trim();
