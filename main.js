@@ -107,7 +107,21 @@ class Lexer {
         if (cleanedToken === '') {
           continue;
         }
-        const classPart = this.getClassPart(cleanedToken);
+        let classPart = this.getClassPart(cleanedToken);
+
+        if (!isNaN(cleanedToken)) { // Check if the token is a number
+          if (Number.isInteger(parseFloat(cleanedToken))) {
+            classPart = 'INTEGER';
+          } else {
+            classPart = 'DOUBLE';
+          }
+        // } else if (cleanedToken.startsWith('"') && cleanedToken.endsWith('"')) {
+        //   classPart = 'STRING';
+        // } else if (cleanedToken.startsWith("'") && cleanedToken.endsWith("'")) {
+        //   classPart = 'CHAR';
+        } else if (['true', 'false'].includes(cleanedToken.toLowerCase())) {
+          classPart = 'BOOLEAN';
+        }
         this.tokens.push({ value: cleanedToken, class: classPart, line: lineNumber + 1 });
       }
     }
