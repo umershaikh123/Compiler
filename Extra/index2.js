@@ -118,8 +118,8 @@ class Lexer {
     for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
       const line = lines[lineNumber].trim();
       const tokensInLine = line.split(/(\s+|;|,|\(|\)|{|}|\[|\]|"|'|\.\s*)/);
-      console.log("\'tokensInLine\' = " , tokensInLine , "\n");
       console.log("\'line\' = " , line , "\n" );
+      console.log("\'tokensInLine\' = " , tokensInLine , "\n");
 
       for (const token of tokensInLine) {
         const cleanedToken = token.trim();
