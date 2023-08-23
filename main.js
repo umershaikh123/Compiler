@@ -32,7 +32,7 @@ class Lexer {
       'IMPLEMENTS': ['implements'],
       'INTERFACE': ['interface'],
       'IMPORT': ['import'],
-      'FUNCTIONS': ['functions'],
+      'FUNCTION': ['function'],
       'ARRAY': ['Array', 'ArrayList'],
       'MAP': ['Map'],
       'INHERIT': ['inherits'],
