@@ -7,60 +7,60 @@ class Lexer {
     this.outputFilePath = outputFilePath;
     this.classification = {
       'DT': ['int', 'char', 'double'],
-      'if': ['if'],
-      'while': ['while'],
-      'do': ['do'],
-      'else': ['else'],
-      'for': ['for'],
-      'Switch': ['switch'],
-      'case': ['case'],
-      'default': ['default'],
+      'IF': ['if'],
+      'WHILE': ['while'],
+      'DO': ['do'],
+      'ELSE': ['else'],
+      'FOR': ['for'],
+      'SWITCH': ['switch'],
+      'CASE': ['case'],
+      'DEFAULT': ['default'],
       'CB': ['continue', 'break'],
-      'return': ['return'],
-      'void': ['void'],
-      'main': ['main'],
-      'abstract': ['abstract'],
-      'boolean': ['boolean'],
-      'String': ['string'],
-      'class': ['class'],
-      'new': ['new'],
-      'AM': ['private', 'public', 'protected'],
-      'static': ['static'],
-      'final': ['final'],
-      'print': ['print'],
-      'extends': ['extends'],
-      'implements': ['implements'],
-      'interface': ['interface'],
-      'import': ['import'],
-      'functions': ['functions'],
-      'A': ['Array', 'ArrayList'],
-      'Map': ['Map'],
-      'inherits': ['inherits'],
-      'this': ['this'],
-      ';': [';'],
-      '{': ['{'],
-      '}': ['}'],
-      ',': [','],
-      '/': ['/'],
-      '/$': ['/$'],
-      '$/': ['$/'],
-      '(': ['('],
-      ')': [')'],
-      ':': [':'],
-      '[': ['['],
-      ']': [']'],
-      '"': ['"'],
-      "'": ["'"],
-      '\\': ['\\'],
-      '.': ['.'],
-      '*': ['*', '/', '%'],
-      '+': ['+', '-'],
-      '<': ['<', '>', '<=', '>=', '!=', '=='],
-      'AND': ['&&'],
-      'OR': ['||'],
-      'NOT': ['!'],
+      'RETURN': ['return'],
+      'VOID': ['void'],
+      'MAIN': ['main'],
+      'ABSTRACT': ['abstract'],
+      'BOOLEAN': ['boolean'],
+      'STRING': ['string'],
+      'CLASS': ['class'],
+      'NEW': ['new'],
+      'ACCESS_MODIFIER': ['private', 'public', 'protected'],
+      'STATIC': ['static'],
+      'FINAL': ['final'],
+      'PRINT': ['print'],
+      'EXTENDS': ['extends'],
+      'IMPLEMENTS': ['implements'],
+      'INTERFACE': ['interface'],
+      'IMPORT': ['import'],
+      'FUNCTIONS': ['functions'],
+      'ARRAY': ['Array', 'ArrayList'],
+      'MAP': ['Map'],
+      'INHERIT': ['inherits'],
+      'THIS': ['this'],
+      'SEMI_COLON': [';'],
+      'LEFT_BRACE': ['{'],
+      'RIGHT_BRACE': ['}'],
+      'COMMA': [','],
+      'BACKSLASH': ['/'],
+      '/$_CLASS': ['/$'],
+      '$/_CLASS': ['$/'],
+      'LEFT_PARENTHESIS': ['('],
+      'RIGHT_PARENTHESIS': [')'],
+      'COLON': [':'],
+      'LEFT_BRACKER': ['['],
+      'RIGHT_BRACKER': [']'],
+      'DOUBLE_QUOTES': ['"'],
+      "SINGLE_QUOTES": ["'"],
+      'DOUBLE_BLACKSLASH': ['\\'],
+      'DOT': ['.'],
+      '*_CLASS': ['*', '/', '%'],
+      '+_CLASS': ['+', '-'],
+      '<_CLASS': ['<', '>', '<=', '>=', '!=', '=='],
+      'AND_CLASS': ['&&'],
+      'OR_CLASS': ['||'],
+      'NOT_CLASS': ['!'],
       'INC_DEC': ['++', '--'],
-      '=': ['='],
+      '=_CLASS': ['='],
       'ASSIGN_OP': ['+=', '-=', '*=', '/=', '%=']
     };
     this.tokens = [];
@@ -100,6 +100,8 @@ class Lexer {
     for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
       const line = lines[lineNumber].trim();
       const tokensInLine = line.split(/(\s+|;|,|\(|\)|{|}|\[|\]|"|'|\.\s*)/);
+      console.log("tokensInLine" , tokensInLine , "\n");
+      console.log();
 
       for (const token of tokensInLine) {
         const cleanedToken = token.trim();
@@ -110,11 +112,13 @@ class Lexer {
         this.tokens.push({ value: cleanedToken, class: classPart, line: lineNumber + 1 });
       }
     }
+
+    console.log("Tokens : " , this.tokens);
   }
 
 // Token : ( value part , class part , lineNo)
   writeTokensToFile() {
-    const outputContent = this.tokens.map(token => `( value part : ${token.value} , class part : ${token.class}, Line No : ${token.line})`).join('\n');
+    const outputContent = this.tokens.map(token => `( ${token.value} , ${token.class}, LineNo: ${token.line})`).join('\n');
     fs.writeFileSync(this.outputFilePath, outputContent);
     console.log('Lexical analysis completed. Tokens written to', this.outputFilePath);
   }
