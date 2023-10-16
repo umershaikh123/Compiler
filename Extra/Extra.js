@@ -142,53 +142,6 @@ class Lexer {
   // ': This matches the single quotation mark character.
   // \.: This matches the period character.
   // \s*: This matches zero or more whitespace characters (spaces, tabs).
-  splitTokensConsideringQuotes(line) {
-    const tokens = []
-    let currentToken = ""
-    let insideQuotes = false
-    let quoteType = ""
-
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i]
-
-      if (char === '"' || char === "'") {
-        if (insideQuotes && quoteType === char) {
-          tokens.push(quoteType + currentToken + quoteType)
-          currentToken = ""
-          insideQuotes = false
-        } else if (!insideQuotes) {
-          quoteType = char
-          insideQuotes = true
-        }
-      } else if (!insideQuotes) {
-        if (/[\s;,\(\){}\[\]\.\s]/.test(char)) {
-          if (currentToken !== "") {
-            tokens.push(currentToken)
-            currentToken = ""
-          }
-          if (/[\s;,\(\){}\[\]\.\s]/.test(char)) {
-            tokens.push(char)
-          }
-        } else {
-          currentToken += char
-        }
-      } else {
-        currentToken += char
-      }
-    }
-
-    if (currentToken !== "") {
-      if (quoteType && currentToken.length === 1) {
-        // Add the token if it's a single character within quotes
-        tokens.push(quoteType + currentToken)
-      } else {
-        // Skip the token if there's an open quote without a closing quote
-        currentToken = ""
-      }
-    }
-
-    return tokens
-  }
 
   tokenize() {
     const inputFileContent = fs.readFileSync(this.inputFilePath, "utf-8")
@@ -230,15 +183,44 @@ class Lexer {
 
       // Remove single line comments starting with '#'
       const lineWithoutSingleLineComments = line.split("#")[0].trim()
+      // Extract tokens within single or double quotes
+      const tokensWithinQuotes = line.match(/(['"])(.*?)\1/g)
 
-      const tokensInLine = this.splitTokensConsideringQuotes(
-        lineWithoutSingleLineComments
-      )
+      // Replace tokens within quotes with a placeholder
+      const lineWithoutQuotes = line.replace(/(['"]).*?\1/g, "QUOTE_TOKEN")
+
+      // Split the line without quotes into tokens
+      const tokensWithoutQuotes = lineWithoutQuotes
+        .split(/(\s*;|,|\(|\)|{|}|\[|\]|\.\s*)/)
+        .filter(Boolean)
+      // Restore tokens within quotes
+      const finalTokens = []
+      for (const token of tokensWithoutQuotes) {
+        if (token === "QUOTE_TOKEN") {
+          // Push the tokens within quotes separately
+          const quotedTokens = tokensWithinQuotes
+            .shift()
+            .split(/(\s*;|,|\(|\)|{|}|\[|\]|\.\s*)/)
+            .filter(Boolean)
+          finalTokens.push(...quotedTokens)
+        } else {
+          finalTokens.push(token)
+        }
+      }
+      // with space
+      // const tokensInLine = lineWithoutSingleLineComments.split(
+      //   /(\s+|;|,|\(|\)|{|}|\[|\]|\.\s*)/
+      // )
 
       console.log("line = ", line, "\n")
-      console.log("tokensInLine = ", tokensInLine, "\n")
+      console.log("tokensInLine = ", finalTokens, "\n")
 
-      for (const token of tokensInLine) {
+      // for (const token of tokensInLine) {
+      //   const cleanedToken = token.trim()
+      //   if (cleanedToken === "") {
+      //     continue
+      //   }
+      for (const token of finalTokens) {
         const cleanedToken = token.trim()
         if (cleanedToken === "") {
           continue
