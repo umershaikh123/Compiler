@@ -151,7 +151,7 @@ class Lexer {
     return "INVALID"
   }
 
-  // splitTokensConsideringQuotes(line) {
+  // splitTokensConsideringQuotes(line, lineNumber) {
   //   const tokens = []
   //   let currentToken = ""
   //   let insideQuotes = false
@@ -170,8 +170,6 @@ class Lexer {
   //         insideQuotes = true
   //       }
   //     } else if (!insideQuotes) {
-  //       console.log("current Token1 = ", currentToken)
-
   //       if (/[\s;,\(\){}\[\].]/.test(char)) {
   //         if (currentToken !== "") {
   //           tokens.push(currentToken)
@@ -186,22 +184,36 @@ class Lexer {
   //     }
   //   }
 
-  //   console.log("current Token2 = ", currentToken)
-
   //   if (!insideQuotes) {
   //     tokens.push(currentToken)
   //   }
-  //   if (currentToken !== "") {
-  //     if (quoteType && currentToken.length === 1) {
-  //       // Add the token if it's a single character within quotes
-  //       tokens.push(quoteType + currentToken)
+
+  //   const processedTokens = []
+  //   for (let i = 0; i < tokens.length; i++) {
+  //     const token = tokens[i]
+  //     if (token === ".") {
+  //       const prevToken = processedTokens.pop()
+  //       const nextToken = tokens[i + 1]
+  //       if (!isNaN(prevToken) && !isNaN(nextToken)) {
+  //         processedTokens.push(prevToken + "." + nextToken)
+  //         i++ // Skip the next token as it's part of the float
+  //       } else {
+  //         processedTokens.push(prevToken)
+  //         processedTokens.push(token)
+  //       }
   //     } else {
-  //       // Skip the token if there's an open quote without a closing quote
-  //       currentToken = ""
+  //       processedTokens.push(token)
   //     }
   //   }
-  //   console.log("current Token3 = ", currentToken)
-  //   return tokens
+
+  //   console.log("processedTokens= ", processedTokens)
+  //   return processedTokens.map((token, index) => {
+  //     return {
+  //       value: token,
+  //       class: this.getClassPart(token),
+  //       line: lineNumber + 1, // Adjust the line number as needed
+  //     }
+  //   })
   // }
 
   splitTokensConsideringQuotes(line, lineNumber) {
@@ -247,9 +259,18 @@ class Lexer {
       if (token === ".") {
         const prevToken = processedTokens.pop()
         const nextToken = tokens[i + 1]
-        if (!isNaN(prevToken) && !isNaN(nextToken)) {
-          processedTokens.push(prevToken + "." + nextToken)
-          i++ // Skip the next token as it's part of the float
+        const isPrevNumeric = !isNaN(prevToken)
+        const isNextNumeric = !isNaN(nextToken)
+        if (isPrevNumeric && isNextNumeric) {
+          const floatPart = prevToken + "." + nextToken
+          const isValidFloat = /^\d+(\.\d+)?$/.test(floatPart)
+          if (isValidFloat) {
+            processedTokens.push(floatPart)
+            i++ // Skip the next token as it's part of the float
+          } else {
+            processedTokens.push(prevToken)
+            processedTokens.push(token)
+          }
         } else {
           processedTokens.push(prevToken)
           processedTokens.push(token)
@@ -259,16 +280,25 @@ class Lexer {
       }
     }
 
-    console.log("processedTokens= ", processedTokens)
-    return processedTokens.map((token, index) => {
-      return {
-        value: token,
-        class: this.getClassPart(token),
-        line: lineNumber + 1, // Adjust the line number as needed
+    const resultTokens = processedTokens.map((token, index) => {
+      const classPart = this.getClassPart(token)
+      if (classPart === "IDENTIFIER" && /\d/.test(token)) {
+        return { value: token, class: "INVALID", line: lineNumber + 1 }
       }
+      return { value: token, class: classPart, line: lineNumber + 1 }
     })
-  }
+    console.log("resultTokens = ", resultTokens)
+    return resultTokens.filter(token => token.class !== "INVALID")
 
+    // console.log("processedTokens= ", processedTokens)
+    // return processedTokens.map((token, index) => {
+    //   return {
+    //     value: token,
+    //     class: this.getClassPart(token),
+    //     line: lineNumber + 1,
+    //   }
+    // })
+  }
   tokenize() {
     const inputFileContent = fs.readFileSync(this.inputFilePath, "utf-8")
     let lines = inputFileContent.split(/\r?\n/)
