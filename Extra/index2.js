@@ -479,7 +479,13 @@ class Lexer {
     const outputContent = this.tokens
       .map(token => `( ${token.value} , ${token.class}, LineNo: ${token.line})`)
       .join("\n")
-    fs.writeFileSync(this.outputFilePath, outputContent)
+
+    const endToken = `( $ , ENDMARKER, Line: ${
+      this.tokens[this.tokens.length - 1].line + 1
+    })`
+    const finalOutput = outputContent + "\n" + endToken
+
+    fs.writeFileSync(this.outputFilePath, finalOutput)
     console.log(
       "Lexical analysis completed. Tokens written to",
       this.outputFilePath
