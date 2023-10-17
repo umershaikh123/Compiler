@@ -142,6 +142,136 @@ class Lexer {
   // ': This matches the single quotation mark character.
   // \.: This matches the period character.
   // \s*: This matches zero or more whitespace characters (spaces, tabs).
+  // splitTokensConsideringQuotes(line , lineNo) {
+  //   const tokens = []
+  //   let currentToken = ""
+  //   let insideQuotes = false
+  //   let quoteType = ""
+
+  //   const reservedWords = [
+  //     "Main",
+  //     "final",
+  //     "print",
+  //     "If",
+  //     "else",
+  //     "static",
+  //     "void",
+  //     "int",
+  //     "char",
+  //     "string",
+  //     "double",
+  //     "boolean",
+  //     "new",
+  //     "function",
+  //     "switch",
+  //     "case",
+  //     "default",
+  //     "break",
+  //     "continue",
+  //     "for",
+  //     "while",
+  //     "Array",
+  //     "ArrayList",
+  //     "Map",
+  //     "public",
+  //     "private",
+
+  //     "abstract",
+  //     "interface",
+  //     "import",
+  //     "inherits",
+  //     "implements",
+  //   ]
+  //   const operators = [
+  //     "+=",
+  //     "-=",
+  //     "*=",
+  //     "/=",
+  //     "%=",
+  //     "<=",
+  //     ">=",
+  //     "!=",
+  //     "==",
+  //     "&&",
+  //     "||",
+  //     "++",
+  //     "--",
+  //     "!",
+  //     "=",
+  //     "<",
+  //     ">",
+  //     "+",
+  //     "-",
+  //     "*",
+  //     "/",
+  //     "%",
+  //   ]
+
+  //   const isOperator = token => {
+  //     return operators.includes(token)
+  //   }
+
+  //   const processToken = token => {
+  //     let classPart
+
+  //     // for (const classPart in this.classification) {
+  //     //   if (this.classification[classPart].includes(word)) {
+  //     //     return classPart
+  //     //   }
+  //     // }
+  //     if (reservedWords.includes(token)) {
+  //       classPart = token
+  //     } else if (isOperator(token)) {
+  //       classPart = "OPERATOR"
+  //     } else {
+  //       classPart = "IDENTIFIER"
+  //     }
+
+  //     tokens.push({
+  //       value: token,
+  //       class: classPart,
+  //       line: lineNo + 1,
+  //     })
+  //   }
+
+  //   for (let i = 0; i < line.length; i++) {
+  //     const char = line[i]
+
+  //     if (char === '"' || char === "'") {
+  //       if (insideQuotes && quoteType === char) {
+  //         currentToken += char // include the closing quote
+  //         processToken(currentToken)
+  //         currentToken = ""
+  //         insideQuotes = false
+  //       } else if (!insideQuotes) {
+  //         quoteType = char
+  //         insideQuotes = true
+  //       }
+  //     } else if (!insideQuotes) {
+  //       if (/\s/.test(char) || operators.includes(char)) {
+  //         if (currentToken !== "") {
+  //           processToken(currentToken)
+  //           currentToken = ""
+  //         }
+  //         if (operators.includes(char)) {
+  //           processToken(char)
+  //         }
+  //       } else {
+  //         currentToken += char
+  //       }
+  //     } else {
+  //       currentToken += char
+  //     }
+  //   }
+
+  //   if (!insideQuotes && currentToken !== "") {
+  //     processToken(currentToken)
+  //   }
+
+  //   console.log("FUNCTIONS tokens ", tokens)
+  //   return tokens
+  // }
+
   splitTokensConsideringQuotes(line) {
     const tokens = []
     let currentToken = ""
@@ -161,39 +291,45 @@ class Lexer {
           insideQuotes = true
         }
       } else if (!insideQuotes) {
-        console.log("current Token1 = ", currentToken)
-        if (/[\s;,\(\){}\[\]\.\s]/.test(char)) {
-          if (currentToken !== "") {
-            tokens.push(currentToken)
-            currentToken = ""
-          }
-          if (/[\s;,\(\){}\[\]\.\s]/.test(char)) {
-            tokens.push(char)
-          }
-        } else {
-          currentToken += char
-        }
+        currentToken += char
       } else {
         currentToken += char
       }
-    }
 
-    console.log("current Token2 = ", currentToken)
+      if (!insideQuotes) {
+        // Check if the current token is a known keyword or operator
+        const isKeywordOrOperator = this.isKeywordOrOperator(currentToken)
+        if (isKeywordOrOperator) {
+          tokens.push(currentToken)
+          currentToken = ""
+        }
+      }
+    }
 
     if (!insideQuotes) {
       tokens.push(currentToken)
     }
+
     if (currentToken !== "") {
       if (quoteType && currentToken.length === 1) {
-        // Add the token if it's a single character within quotes
         tokens.push(quoteType + currentToken)
       } else {
-        // Skip the token if there's an open quote without a closing quote
-        currentToken = ""
+        tokens.push(currentToken)
       }
     }
-    console.log("current Token3 = ", currentToken)
+
     return tokens
+  }
+
+  isKeywordOrOperator(token) {
+    // Check if the token is a known keyword or operator
+    return (
+      // (this.classification[classPart].includes(word))
+      this.classification["DT"].includes(token) ||
+      this.classification["BINARY_OP"].includes(token) ||
+      this.classification["UNIARY_OP"].includes(token)
+      // || this.reservedWords.includes(token)
+    )
   }
 
   tokenize() {
@@ -242,7 +378,8 @@ class Lexer {
         "\n"
       )
       const tokensInLine = this.splitTokensConsideringQuotes(
-        lineWithoutSingleLineComments
+        lineWithoutSingleLineComments,
+        lineNumber
       )
 
       console.log("line = ", line, "\n")

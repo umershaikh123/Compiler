@@ -1,2 +1,3 @@
-( c , CHAR, LineNo: 1)
-( charasd , IDENTIFIER, LineNo: 1)
+( ab , IDENTIFIER, LineNo: 1)
+( . , DOT, LineNo: 1)
+( 3343 , FLOAT, LineNo: 1)
