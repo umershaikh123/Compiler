@@ -295,13 +295,13 @@ const grammar = {
   "<V2>": [["<Var_Init>"], ["<assign_right>"]],
   "<Var_Init>": [["<Const>", "<var_init_list>"]],
   "<var_init_list>": [[",", "ID", "=", "<Const>", "<var_init_list>"], ["ε"]],
-  "<Const>": [
-    ["int_const"],
-    ["double_const"],
-    ["str_const"],
-    ["char_const"],
-    ["bool_const"],
-  ],
+  //   "<Const>": [
+  //     ["int_const"],
+  //     ["double_const"],
+  //     ["str_const"],
+  //     ["char_const"],
+  //     ["bool_const"],
+  //   ],
   "<While_St>": [["while", "(", "<OE>", ")", "{", "<Body>", "}"]],
   "<Do_while_St>": [["do", "{", "<Body>", "}", "while", "(", "<OE>", ")", ";"]],
   "<if_else>": [
@@ -468,11 +468,13 @@ const tokens = tokenData
     const matches = line.match(/\(([^,]+), ([^,]+), LineNo: (\d+)\)/)
     if (matches && matches.length === 4) {
       const [, valuepart, classpart, lineNo] = matches
-      return { valuepart, classpart, lineNo }
+      return { valuepart: valuepart.trim(), classpart, lineNo } // Trim spaces from valuepart
     }
     return null
   })
   .filter(token => token !== null)
+
+console.log("tokens ", tokens)
 
 let i = 0 // Global index to track current token
 
@@ -483,18 +485,18 @@ function parseProductionRule(productionRule, currentNonTerminal) {
       const nonTerminal = symbol.substring(1, symbol.length - 1)
       if (!parseNonTerminal(nonTerminal)) {
         console.log(
-          `Failed to match ${symbol} at line ${tokens[i].lineNo} in ${currentNonTerminal}`
+          `Failed to match ${symbol} at line ${tokens[i].lineNo} with token ${tokens[i].classpart} in ${currentNonTerminal} \n`
         )
         return false
       }
     } else {
       // It's a terminal symbol, check if it matches the current token
       if (tokens[i] && tokens[i].classpart === symbol) {
-        console.log(`Matched ${symbol}`)
-        i++
+        console.log(`Matched ${symbol}`, " \n")
+        // i++
       } else {
         console.log(
-          `Failed to match ${symbol} at line ${tokens[i].lineNo} in ${currentNonTerminal}`
+          `Failed to match ${symbol} at line ${tokens[i].lineNo} with token ${tokens[i].classpart} in ${currentNonTerminal}`
         )
         return false
       }
@@ -504,16 +506,33 @@ function parseProductionRule(productionRule, currentNonTerminal) {
 }
 
 function parseNonTerminal(nonTerminal) {
+  nonTerminal = nonTerminal.trim() // Trim spaces
+  console.log("nonTerminal=", nonTerminal)
+  console.log("i =", i)
   const selectionSet = selectionSets[nonTerminal]
+  console.log("selectionSet", selectionSet)
+  console.log(
+    "selectionSet.includes(tokens[i].classpart",
+    selectionSet.includes(tokens[i].classpart)
+  )
+  console.log("tokens[i].classpart", tokens[i].classpart)
+
+  const currentIndex = i // Store the current index
 
   if (selectionSet.includes(tokens[i].classpart)) {
     console.log(
-      `Parsing ${nonTerminal} with token ${tokens[i].classpart} at line ${tokens[i].lineNo}`
+      `Parsing ${nonTerminal} with token ${tokens[i].classpart} at line ${tokens[i].lineNo}   \n `
     )
-    i++
 
-    const productionRules = grammar[nonTerminal]
-    console.log("Production rules for ", nonTerminal, ": ", productionRules)
+    // const productionRules = grammar[nonTerminal]
+    const productionRules = grammar[`<${nonTerminal}>`]
+    console.log(
+      "Production rules for ",
+      nonTerminal,
+      ": ",
+      productionRules,
+      " \n"
+    )
 
     let success = false
     for (const productionRule of productionRules) {
@@ -522,20 +541,37 @@ function parseNonTerminal(nonTerminal) {
         break // Successfully parsed one production rule
       }
     }
-
-    return success
+    ;``
+    if (success) {
+      //   i++ // Increment only if successfully parsed
+      return true
+    }
   }
 
-  console.log(`Failed to match ${nonTerminal} at line ${tokens[i].lineNo}`)
+  console.log(
+    `Failed to match ${nonTerminal} at line ${tokens[currentIndex].lineNo} with token ${tokens[currentIndex].classpart} \n`
+  )
+
+  // Reset the index to the previous value after the recursive call
+  i = currentIndex
   return false // Selection set didn't match
 }
 
 function parse() {
-  while (i < tokens.length) {
-    const success = parseNonTerminal("func_call")
+  const nonTerminals = Object.keys(grammar).map(nonTerminal =>
+    nonTerminal.replace(/<|>/g, "")
+  )
+  //console.log("nonTerminals", nonTerminals)
+  for (const nonTerminal of nonTerminals) {
+    i = 0 // Reset the token index for each non-terminal
+    console.log(`Parsing ${nonTerminal}...`)
+    const success = parseNonTerminal(nonTerminal)
+
     if (!success) {
-      console.log("Failed to parse.")
-      break
+      console.log(`Failed to parse ${nonTerminal}.`)
+      break // Stop parsing if any non-terminal fails
+    } else {
+      console.log(`Successfully parsed ${nonTerminal}.`)
     }
   }
 }

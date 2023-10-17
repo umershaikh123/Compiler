@@ -1,7 +1,0 @@
-( public , ACCESS_MODIFIER, LineNo: 1)
-( int , DT, LineNo: 1)
-( a , IDENTIFIER, LineNo: 1)
-( = , =_CLASS, LineNo: 1)
-( 2323 , INT, LineNo: 1)
-( ; , SEMI_COLON, LineNo: 1)
-( $ , ENDMARKER, Line: 2)
