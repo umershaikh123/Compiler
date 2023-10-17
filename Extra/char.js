@@ -26,7 +26,6 @@ class Lexer {
       ACCESS_MODIFIER: ["private", "public"],
       STATIC: ["static"],
 
-      // 'PRINT': ['print'],
       EXTENDS: ["extends"],
       IMPLEMENTS: ["implements"],
       INTERFACE: ["interface"],
@@ -41,26 +40,40 @@ class Lexer {
       RIGHT_BRACE: ["}"],
       COMMA: [","],
       BACKSLASH: ["/"],
-      "/$_CLASS": ["/$"],
-      "$/_CLASS": ["$/"],
+      // "/$_CLASS": ["/$"],
+      // "$/_CLASS": ["$/"],
       LEFT_PARENTHESIS: ["("],
       RIGHT_PARENTHESIS: [")"],
       COLON: [":"],
       LEFT_BRACKER: ["["],
       RIGHT_BRACKER: ["]"],
       // DOUBLE_QUOTES: ['"'],
-      // SINGLE_QUOTES: ["'"],
-      DOUBLE_BLACKSLASH: ["\\"],
-      DOT: ["."],
+
       "*_CLASS": ["*", "/", "%"],
       "+_CLASS": ["+", "-"],
       OP_CLASS: ["<", ">", "<=", ">=", "!=", "=="],
+      "=_CLASS": ["="],
       AND_CLASS: ["&&"],
       OR_CLASS: ["||"],
       NOT_CLASS: ["!"],
       INC_DEC: ["++", "--"],
-      "=_CLASS": ["="],
       ASSIGN_OP: ["+=", "-=", "*=", "/=", "%="],
+      BINARY_OP: [
+        "+=",
+        "-=",
+        "*=",
+        "/=",
+        "%=",
+        "<=",
+        ">=",
+        "!=",
+        "==",
+        "&&",
+        "||",
+        "++",
+        "--",
+      ],
+      UNIARY_OP: ["!", "=", "<", ">", "+", "-", "*", "/", "%"],
       CATCH: ["catch"],
       THROW: ["throw"],
       THROWS: ["throws"],
@@ -111,11 +124,19 @@ class Lexer {
       }
     }
     const isCharValid = /^'([^'\\]|\\[btnfr\\'"nrt])'$/.test(word)
+    const isFloat = /^[-+]?\d+(\.\d+)?$/.test(word)
+    const isInteger = /^[-+]?\d+$/.test(word)
 
+    if (isFloat) {
+      return "FLOAT"
+    }
     if (isCharValid) {
       return "CHAR"
     }
 
+    if (isInteger) {
+      return "INT"
+    }
     if (/^"([^\\"]|\\.)+"$/.test(word)) {
       return "STRING"
     }
@@ -162,14 +183,23 @@ class Lexer {
         }
       } else if (!insideQuotes) {
         console.log("current Token1 = ", currentToken)
-        if (/[\s;,\(\){}\[\]\.\s]/.test(char)) {
+        // remove white space , add , :
+        // if (/[\s;,\(\){}\[\]\.\s]/.test(char)) {
+        //   if (currentToken !== "") {
+        //     tokens.push(currentToken)
+        //     currentToken = ""
+        //   }
+        //   if (/[\s;,\(\){}\[\]\.\s]/.test(char)) {
+        //     tokens.push(char)
+        //   }
+        // }
+
+        if (/[\s;,\(\){}\[\].]/.test(char)) {
           if (currentToken !== "") {
             tokens.push(currentToken)
             currentToken = ""
           }
-          if (/[\s;,\(\){}\[\]\.\s]/.test(char)) {
-            tokens.push(char)
-          }
+          tokens.push(char)
         } else {
           currentToken += char
         }
@@ -237,13 +267,15 @@ class Lexer {
       // Remove single line comments starting with '#'
       const lineWithoutSingleLineComments = line.split("#")[0].trim()
       console.log(
-        "lineWithoutSingleLineComments = ",
+        "lineWithoutSingleLineComments= ",
         lineWithoutSingleLineComments,
         "\n"
       )
       const tokensInLine = this.splitTokensConsideringQuotes(
         lineWithoutSingleLineComments
       )
+
+      // Split the token into float or identifier parts
 
       console.log("line = ", line, "\n")
       console.log("tokensInLine = ", tokensInLine, "\n")
@@ -257,10 +289,34 @@ class Lexer {
 
         let classPart = this.getClassPart(cleanedToken)
 
+        // console.log("!isNaN(cleanedToken) ", !isNaN(cleanedToken))
+        // console.log(
+        //   "Number.isInteger(parseFloat(cleanedToken))",
+        //   Number.isInteger(parseFloat(cleanedToken))
+        // )
+
+        // const splitToken = cleanedToken.split(/\./)
+
+        // for (let i = 0; i < splitToken.length; i++) {
+        //   const tokenPart = splitToken[i]
+        //   const classPart = this.getClassPart(tokenPart)
+        //   this.tokens.push({
+        //     value: tokenPart,
+        //     class: classPart,
+        //     line: lineNumber + 1,
+        //   })
+
+        // }
         if (!isNaN(cleanedToken)) {
           // Check if the token is a number
           if (Number.isInteger(parseFloat(cleanedToken))) {
             classPart = "INTEGER"
+            this.tokens.push({
+              value: cleanedToken,
+              class: classPart,
+              line: lineNumber,
+            })
+            continue
           } else {
             classPart = "DOUBLE"
           }
@@ -326,22 +382,12 @@ class Lexer {
             line: lineNumber + 1,
           })
         }
-
-        // if (classPart === "CHAR" || classPart === "STRING") {
-        //   this.tokens.push({
-        //     value: cleanedToken.substring(1, cleanedToken.length - 1), // Remove quotes for char and string tokens
-        //     class: classPart,
-        //     line: lineNumber + 1,
-        //   })
-        //   continue
-        // }
       }
     }
 
     console.log("Tokens : ", this.tokens)
   }
 
-  // Token : ( value part , class part , lineNo)
   writeTokensToFile() {
     const outputContent = this.tokens
       .map(token => `( ${token.value} , ${token.class}, LineNo: ${token.line})`)

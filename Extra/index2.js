@@ -5,7 +5,7 @@ class Lexer {
     this.inputFilePath = inputFilePath
     this.outputFilePath = outputFilePath
     this.classification = {
-      DT: ["int", "char", "double", "string", "char"],
+      DT: ["int", "double", "string", "char", "Array", "ArrayList", "HashMap"],
       IF: ["if"],
       WHILE: ["while"],
       DO: ["do"],
@@ -25,14 +25,12 @@ class Lexer {
       NEW: ["new"],
       ACCESS_MODIFIER: ["private", "public"],
       STATIC: ["static"],
-
-      // 'PRINT': ['print'],
       EXTENDS: ["extends"],
       IMPLEMENTS: ["implements"],
       INTERFACE: ["interface"],
       IMPORT: ["import"],
       FUNCTION: ["function"],
-      ARRAY: ["Array", "ArrayList"],
+      // ARRAY: ["Array", "ArrayList"],
       MAP: ["Map"],
       INHERIT: ["inherits"],
 
@@ -50,8 +48,8 @@ class Lexer {
       RIGHT_BRACKER: ["]"],
       // DOUBLE_QUOTES: ['"'],
       // SINGLE_QUOTES: ["'"],
-      DOUBLE_BLACKSLASH: ["\\"],
       DOT: ["."],
+      DOUBLE_BLACKSLASH: ["\\"],
       "*_CLASS": ["*", "/", "%"],
       "+_CLASS": ["+", "-"],
       OP_CLASS: ["<", ">", "<=", ">=", "!=", "=="],
@@ -110,6 +108,7 @@ class Lexer {
         return classPart
       }
     }
+
     const isCharValid = /^'([^'\\]|\\[btnfr\\'"nrt])'$/.test(word)
 
     if (isCharValid) {
@@ -119,13 +118,124 @@ class Lexer {
     if (/^"([^\\"]|\\.)+"$/.test(word)) {
       return "STRING"
     }
-
+    // if (classPart != "INVALID") {
+    //   return classPart
+    // }
     // Check if the token is an identifier based on the rules
     if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(word)) {
       return "IDENTIFIER"
     }
-
     return "INVALID"
+  }
+
+  hanldeNoSpaceTokens(word, lineNumber) {
+    const escapeRegExp = string => {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    }
+    const tokens = []
+    const keywords = {
+      DT: ["int", "double", "string", "char", "Array", "ArrayList", "HashMap"],
+      IF: ["if"],
+      WHILE: ["while"],
+      DO: ["do"],
+      ELSE: ["else"],
+      FOR: ["for"],
+      SWITCH: ["switch"],
+      CASE: ["case"],
+      DEFAULT: ["default"],
+      CB: ["continue", "break"],
+      RETURN: ["return"],
+      VOID: ["void"],
+      MAIN: ["main"],
+      ABSTRACT: ["abstract"],
+      BOOLEAN: ["boolean"],
+      STRING: ["string"],
+      CLASS: ["class"],
+      NEW: ["new"],
+      ACCESS_MODIFIER: ["private", "public"],
+      STATIC: ["static"],
+      EXTENDS: ["extends"],
+      IMPLEMENTS: ["implements"],
+      INTERFACE: ["interface"],
+      IMPORT: ["import"],
+      FUNCTION: ["function"],
+      INHERIT: ["inherits"],
+      // DOUBLE_BLACKSLASH: ["\\"],
+      // "*_CLASS": ["*", "/", "%"],
+      // "+_CLASS": ["+", "-"],
+      // OP_CLASS: ["<", ">", "<=", ">=", "!=", "=="],
+      // AND_CLASS: ["&&"],
+      // OR_CLASS: ["||"],
+      // NOT_CLASS: ["!"],
+      // INC_DEC: ["++", "--"],
+      // "=_CLASS": ["="],
+      // ASSIGN_OP: ["+=", "-=", "*=", "/=", "%="],
+      CATCH: ["catch"],
+      THROW: ["throw"],
+      THROWS: ["throws"],
+      FINALLY: ["finally"],
+      INVALID: ["INVALID"],
+    }
+
+    for (const keyword in keywords) {
+      const keywordList = keywords[keyword]
+
+      for (const kw of keywordList) {
+        const regex = new RegExp(`(${kw})`, "g")
+        word = word.replace(regex, ` $1 `)
+      }
+    }
+
+    const splitTokens = word.split(/\s+/).filter(token => token.trim() !== "")
+
+    for (const token of splitTokens) {
+      for (const keyword in keywords) {
+        if (keywords[keyword].includes(token)) {
+          console.log("tokens push", tokens)
+          tokens.push({ value: token, class: keyword, line: lineNumber })
+          break
+        }
+      }
+    }
+    // for (const keyword in keywords) {
+    //   const keywordList = keywords[keyword]
+
+    //   for (const kw of keywordList) {
+    //     // const regex = new RegExp(`(${kw})`, "g")
+    //     //  word = word.replace(regex, ` $1 `)
+    //     const regexPattern = new RegExp(`\\b${escapeRegExp(kw)}\\b`, "g")
+    //     word = word.replace(regexPattern, ` $& `)
+    //   }
+    // }
+
+    // console.log("word", word)
+    // const splitTokens = word.split(/\s+/).filter(token => token.trim() !== "")
+    // console.log(" splitTokens", splitTokens)
+
+    // for (const token of splitTokens) {
+    //   for (const keyword in keywords) {
+    //     console.log(" token ", token)
+    //     console.log(
+    //       "keywords[keyword].includes(token) ",
+    //       keywords[keyword].includes(token)
+    //     )
+    //     if (keywords[keyword].includes(token)) {
+    //       console.log("")
+    //       console.log(
+    //         " value: token, class: keyword, line: lineNumber  ",
+    //         token,
+    //         keyword,
+    //         lineNumber,
+    //         "\n"
+    //       )
+    //       console.log("tokens push", tokens)
+    //       tokens.push({ value: token, class: keyword, line: lineNumber })
+    //       break
+    //     }
+    //   }
+    // }
+
+    return tokens
   }
 
   // Breakers
@@ -161,6 +271,7 @@ class Lexer {
           insideQuotes = true
         }
       } else if (!insideQuotes) {
+        console.log("current Token1 = ", currentToken)
         if (/[\s;,\(\){}\[\]\.\s]/.test(char)) {
           if (currentToken !== "") {
             tokens.push(currentToken)
@@ -177,6 +288,11 @@ class Lexer {
       }
     }
 
+    console.log("current Token2 = ", currentToken)
+
+    if (!insideQuotes) {
+      tokens.push(currentToken)
+    }
     if (currentToken !== "") {
       if (quoteType && currentToken.length === 1) {
         // Add the token if it's a single character within quotes
@@ -186,7 +302,7 @@ class Lexer {
         currentToken = ""
       }
     }
-
+    console.log("current Token3 = ", currentToken)
     return tokens
   }
 
@@ -230,6 +346,11 @@ class Lexer {
 
       // Remove single line comments starting with '#'
       const lineWithoutSingleLineComments = line.split("#")[0].trim()
+      console.log(
+        "lineWithoutSingleLineComments = ",
+        lineWithoutSingleLineComments,
+        "\n"
+      )
 
       const tokensInLine = this.splitTokensConsideringQuotes(
         lineWithoutSingleLineComments
@@ -246,6 +367,7 @@ class Lexer {
         console.log("cleanedToken = ", cleanedToken, "\n")
 
         let classPart = this.getClassPart(cleanedToken)
+        console.log("classPart =", classPart)
 
         if (!isNaN(cleanedToken)) {
           // Check if the token is a number
@@ -309,7 +431,28 @@ class Lexer {
             // Invalid char token, skip it
             continue
           }
+        } else if (
+          this.tokens.classPart === "INVALID" ||
+          this.tokens.classPart === "IDENTIFIER"
+        ) {
+          const tokensInLine = this.hanldeNoSpaceTokens(
+            lineWithoutSingleLineComments,
+            lineNumber
+          )
+          console.log("line = ", line, "\n")
+          console.log("NewtokensInLineINVALID= ", tokensInLine, "\n")
+          this.tokens.push(...tokensInLine)
         } else {
+          // const tokensInLine = this.hanldeNoSpaceTokens(
+          //   lineWithoutSingleLineComments,
+          //   lineNumber
+          // )
+          // console.log("line = ", line, "\n")
+          // console.log("NewtokensInLineINVALID= ", tokensInLine, "\n")
+          // this.tokens.push(...tokensInLine)
+          // console.log("tokensInLine BEFORE  ", tokensInLine, "\n")
+
+          // Invalidate tokens
           this.tokens.push({
             value: cleanedToken,
             class: classPart,

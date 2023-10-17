@@ -1,0 +1,2 @@
+( c , CHAR, LineNo: 1)
+( charasd , IDENTIFIER, LineNo: 1)
