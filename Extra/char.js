@@ -252,7 +252,6 @@ class Lexer {
     if (!insideQuotes) {
       tokens.push(currentToken)
     }
-
     const processedTokens = []
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
@@ -276,19 +275,35 @@ class Lexer {
           processedTokens.push(token)
         }
       } else {
-        processedTokens.push(token)
+        const hasNumeric = /\d/.test(token)
+        const hasAlphabetic = /[a-zA-Z]/.test(token)
+        if (hasNumeric && hasAlphabetic) {
+          processedTokens.push("INVALID")
+        } else {
+          processedTokens.push(token)
+        }
       }
     }
 
     const resultTokens = processedTokens.map((token, index) => {
-      const classPart = this.getClassPart(token)
-      if (classPart === "IDENTIFIER" && /\d/.test(token)) {
+      if (token === "INVALID") {
         return { value: token, class: "INVALID", line: lineNumber + 1 }
       }
+      const classPart = this.getClassPart(token)
       return { value: token, class: classPart, line: lineNumber + 1 }
     })
+
     console.log("resultTokens = ", resultTokens)
     return resultTokens.filter(token => token.class !== "INVALID")
+
+    // const resultTokens = processedTokens.map((token, index) => {
+    //   const classPart = this.getClassPart(token)
+    //   if (classPart === "IDENTIFIER" && /\d/.test(token)) {
+    //     return { value: token, class: "INVALID", line: lineNumber + 1 }
+    //   }
+    //   return { value: token, class: classPart, line: lineNumber + 1 }
+    // })
+    // return resultTokens.filter(token => token.class !== "INVALID")
 
     // console.log("processedTokens= ", processedTokens)
     // return processedTokens.map((token, index) => {

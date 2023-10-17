@@ -1,1 +1,3 @@
+( 23.454 , FLOAT, LineNo: 1)
 ( . , DOT, LineNo: 1)
+( 78 , FLOAT, LineNo: 1)
