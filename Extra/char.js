@@ -126,6 +126,9 @@ class Lexer {
     const isCharValid = /^'([^'\\]|\\[btnfr\\'"nrt])'$/.test(word)
     const isFloat = /^[-+]?\d+(\.\d+)?$/.test(word)
     const isInteger = /^[-+]?\d+$/.test(word)
+    if (isInteger) {
+      return "INT"
+    }
     if (!isNaN(parseFloat(word))) {
       return "FLOAT"
     }
@@ -136,9 +139,6 @@ class Lexer {
       return "CHAR"
     }
 
-    if (isInteger) {
-      return "INT"
-    }
     if (/^"([^\\"]|\\.)+"$/.test(word)) {
       return "STRING"
     }
