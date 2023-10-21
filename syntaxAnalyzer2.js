@@ -44,7 +44,7 @@ const tokens = tokenData
 let tokenIndex = 0
 
 console.log("tokens ", tokens)
-console.log("tokens[0].classpart", tokens[0].classpart)
+// console.log("tokens[0].classpart", tokens[0].classpart)
 function parseNonTerminal(nonTerminal) {
   console.log(`Parsing non-terminal: ${nonTerminal}`)
   const productionRule = Grammar[nonTerminal]
@@ -57,7 +57,7 @@ function parseNonTerminal(nonTerminal) {
       for (const symbol of rule) {
         if (symbol.startsWith("<")) {
           // It's a non-terminal
-          console.log(`Processing non-terminal: ${symbol}`)
+          console.log(`Processing non-terminal: ${symbol}  \n`)
           if (!parseNonTerminal(symbol)) {
             failed = true
             break
@@ -68,11 +68,11 @@ function parseNonTerminal(nonTerminal) {
           console.log("currentToken", currentToken)
           //   console.log("currentToken.classpart", currentToken.classpart)
           if (currentToken && currentToken.classpart === symbol) {
-            console.log(`Matched ${symbol}`)
+            console.log(`Matched ${symbol}  \n`)
             tokenIndex++
           } else {
             console.log(
-              `Failed to match ${symbol} at line ${currentToken.lineNo}`
+              `Failed to match ${symbol} at line ${currentToken.lineNo}  \n`
             )
             failed = true
             break
