@@ -21,5 +21,5 @@ git clone https://github.com/umershaikh123/Compiler.git
 cd compiler
  
 node main.js
-node syntaxAnalyzer.js
+node syntaxAnalyzer2.js
 ```
