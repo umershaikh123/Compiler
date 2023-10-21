@@ -5,7 +5,7 @@ const selectionSets = {
   listID: ["{"],
   ClassBody: ["{"],
   ClassBodyDecl: ["   "],
-  C: ["{", "void", "int", "bool", "float", "char", "string"],
+  C: ["{", "DT"],
   L: [],
   Parameters: [],
   parameter_list: [],
@@ -218,27 +218,50 @@ const selectionSets = {
   P: ["ID"],
 }
 
-const grammar = {
+const Grammer = {
   "<ClassDecl>": [
     [
       "<ClassAccMod>",
       "<ClassNonAccMod>",
       "class",
-      "Id",
+      "ID",
       "<Extra>",
       "{",
       "<ClassBody>",
       "}",
+      "$",
+    ],
+  ],
+  "<Extra>": [["Extends", "Implements", "null"]],
+  "<InterfaceIDList>": [["ID", "<listID>"]],
+
+  "<ClassBody>": [["null"], ["<AM>", "<ClassBody>"]],
+  "<ClassAccMod>": [["public"], ["private"], ["default"]],
+  "<ClassNonAccMod>": [["final"], ["abstract"], ["null"]],
+  "<AM>": [["public", "private"]],
+}
+const grammar = {
+  "<ClassDecl>": [
+    [
+      "<ClassAccMod>",
+      "<ClassNonAccMod>",
+      // "class",
+      "ID",
+      "<Extra>",
+      // "{",
+      "<ClassBody>",
+      // "}",
     ],
   ],
   "<Extra>": [
-    ["Extends", "classID"],
-    ["Implements", "<InterfaceIDList>"],
-    ["ε"],
+    ["Extends", "Implements", "{"],
+
+    // ["ε"],
+    // [],
   ],
   "<InterfaceIDList>": [["ID", "<listID>"]],
   "<listID>": [[",", "ID", "<listID>"], ["ε"]],
-  "<ClassBody>": [["<AM>", "<ClassBodyDecl>", "<ClassBody>"], ["ε"]],
+  "<ClassBody>": [["<AM>", "<ClassBodyDecl>", "<ClassBody>"], ["}"]],
   "<ClassBodyDecl>": [
     ["ID", "(", "<Parameters>", ")", ":", "<C>"],
     ["<L>"],
@@ -271,7 +294,7 @@ const grammar = {
   "<AM>": [["public", "I", "private"]],
   "<AM0>": [["Static"]],
   "<ClassAccMod>": [["public"], ["private"], ["default"]],
-  "<ClassNonAccMod>": [["final"], ["abstract"], ["ε"]],
+  "<ClassNonAccMod>": [["final"], ["abstract"], ["class"]],
   "<Body>": [["<MST>"], ["ε"]],
   "<SST>": [
     ["<AM_st>"],
