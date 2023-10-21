@@ -1,9 +1,5 @@
 public class shapes  {
-   public
-   public
-      public
-         public
-            public
-               public
-                  public
+   public Static main() {
+      public int a;
+   }
 }
