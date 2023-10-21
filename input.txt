@@ -1,3 +1,4 @@
-public abstract class shapes extends {
-
+public class shapes  {
+   public
+   public
 }

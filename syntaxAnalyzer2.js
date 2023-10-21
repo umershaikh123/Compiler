@@ -13,7 +13,7 @@ const Grammar = {
     ],
   ],
   "<Extra>": [["extends"], ["Implements"], ["null"]],
-  "<ClassBody>": [["null"], ["<AM>"], ["<ClassBody>"]],
+  "<ClassBody>": [["<AM>", "<ClassBody>"], ["null"]],
   "<ClassAccMod>": [["public"], ["private"], ["default"]],
   "<ClassNonAccMod>": [["final"], ["abstract"], ["null"]],
   "<AM>": [["public"], ["private"]],
