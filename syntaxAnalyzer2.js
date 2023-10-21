@@ -27,7 +27,7 @@ const Grammar = {
     ["{", "<Body>", "}"],
     // ["<return_type>", "{", "<Body>", "}"],
   ],
-  "<L>": [["<Main_Func>"], ["<abstract_fun>"], ["<Attributes>"]],
+  "<L>": [["<abstract_fun>"], ["<Main_Func>"], ["<Attributes>"]],
   "<Parameters>": [["<Parameter>"], ["<parameter_list>"], ["null"]],
   "<parameter_list>": [[",", "<Parameter>", "<parameter_list>"], ["null"]],
   "<Parameter>": [["DT", "ID"]],
