@@ -1,3 +1,9 @@
 public abstract class circle implements a  {
- public arr[0];
+ 
+   
+   public Static main() {
+
+     public HashMap  [Integer, Integer]  map = new HashMap [Integer , Integer] ;
+   }
+  
 }

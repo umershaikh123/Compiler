@@ -16,7 +16,12 @@ const Grammar = {
   "<Extra>": [["extends", "ID"], ["implements", "<InterfaceIDList>"], ["null"]],
   "<InterfaceIDList>": [["ID", "<listID>"]],
   "<listID>": [[",", "ID", "<listID>"], ["null"]],
-  "<ClassBody>": [["<AM>", "<ClassBodyDecl>", "<ClassBody>"], ["null"]],
+  "<ClassBody>": [
+    ["<AM>", "<ClassBodyDecl>", "<ClassBody>"],
+
+    ["<array_use>", "<ClassBody>"],
+    ["null"],
+  ],
   "<ClassBodyDecl>": [
     ["ID", "(", "<Parameters>", ")", ":", "<C>"],
     ["<L>"],
@@ -32,12 +37,7 @@ const Grammar = {
   "<parameter_list>": [[",", "<Parameter>", "<parameter_list>"], ["null"]],
   "<Parameter>": [["DT", "ID"]],
   "<Main_Func>": [["main", "(", ")", "{", "<Body>", "}"]],
-  "<Attributes>": [
-    ["DT", "<A>"],
-    ["<ArrayList>"],
-    ["<HashMap>"],
-    ["<array_use>"],
-  ],
+  "<Attributes>": [["DT", "<A>"], ["<ArrayList>"], ["<HashMap>"]],
   "<A>": [["<Var>"], ["<Arrays>"]],
   "<abstract_fun>": [["abstract", "ID", "(", "<Arguments>", ")", ":", "DT"]],
   "<AM>": [["public"], ["private"]],
@@ -57,7 +57,10 @@ const Grammar = {
     ["<try_catch_block>"],
     ["ID", "<S>"],
   ],
-  "<S>": [[".", "<S2>"]],
+  "<S>": [
+    [".", "<S2>"],
+    ["[", "int_const", "]", "<array_change_value>"],
+  ],
   "<S2>": [["<D1>"], ["<assign_st>"]],
   "<AM_st>": [["<AM>", "<NS>"]],
   "<NS>": [["AM0", "<ST>"], ["<ST>"]],
@@ -235,13 +238,26 @@ const Grammar = {
     [",", "<const>", "<list_values>"],
     ["null"],
   ],
-  "<array_use>": [["ID", "[", "<int_const>", "]", "<array_change_value>"]],
-  "<array_change_value>": [[";", "I", "=", "{", "<const>", "}"]],
+  "<array_use>": [["ID", "[", "int_const", "]", "<array_change_value>"]],
+  "<array_change_value>": [[";"], ["=", "<const>", ";"]],
 
   //List:
   // "<WDT>": [["Integer"], ["String"], ["Boolean"], ["Float"], ["Character"]],
-  "<arrayList>": [
-    ["<ArrayList>", "WDT", "ID", "=", "new", "<ArrayList>", "WDT", ";"],
+  "<ArrayList>": [
+    [
+      "ArrayList",
+      "[",
+      "WDT",
+      "]",
+      "ID",
+      "=",
+      "new",
+      "ArrayList",
+      "[",
+      "WDT",
+      "]",
+      ";",
+    ],
   ],
 
   //HashMap:
@@ -249,22 +265,22 @@ const Grammar = {
     [
       "HashMap",
 
-      "<",
+      "[",
       "WDT",
       ",",
       "WDT",
-      ">",
+      "]",
 
       "ID",
       "=",
       "new",
       "HashMap",
 
-      "<",
+      "[",
       "WDT",
       ",",
       "WDT",
-      ">",
+      "]",
 
       ";",
     ],

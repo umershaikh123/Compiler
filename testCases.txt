@@ -26,8 +26,21 @@ public int[] arr = new int[0];
 public Static int[] arr = new int[0];
 
 
+array_use
+public abstract class circle implements a  {
+ 
+    arr[0] = 10;
+    arr[2];
 
+   public Static main() {
+   arr[0] = 10;
+    arr[2]; 
+   }
+  
+}
 
+ public ArrayList  [Integer]  list = new ArrayList [Integer] ;
+public HashMap  [Integer, Integer]  map = new HashMap [Integer , Integer] ;
 failed
 public int a = 10;  <assign_right> 
 shape1 alphabets and numbers not allowed
