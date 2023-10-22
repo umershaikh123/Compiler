@@ -21,11 +21,11 @@ class Lexer {
       // ],
       // AM: ["public", "private"],
 
-      int_const: ["int_const"],
-      bool_const: ["bool_const"],
-      double_const: ["double_const"],
-      char_const: ["char_const"],
-      str_const: ["str_const"],
+      // int_const: ["int_const"],
+      // bool_const: ["bool_const"],
+      // double_const: ["double_const"],
+      // char_const: ["char_const"],
+      // str_const: ["str_const"],
       if: ["if"],
       while: ["while"],
       do: ["do"],
@@ -74,7 +74,6 @@ class Lexer {
       "!": ["!"],
       " ||": [" ||"],
       "&&": ["&&"],
-      ",": [","],
 
       add: ["add"],
       get: ["get"],
@@ -206,16 +205,16 @@ class Lexer {
     const isFloat = /^[-+]?\d+(\.\d+)?$/.test(word)
     const isInteger = /^[-+]?\d+$/.test(word)
     if (isInteger) {
-      return "INT"
+      return "int_const"
     }
     if (!isNaN(parseFloat(word))) {
-      return "FLOAT"
+      return "double_const"
     }
     // if (isFloat) {
     //   return "FLOAT"
     // }
     if (isCharValid) {
-      return "CHAR"
+      return "char_const"
     }
 
     if (/^"([^\\"]|\\.)+"$/.test(word)) {
@@ -493,9 +492,9 @@ class Lexer {
             continue
           }
         } else if (["true", "false"].includes(cleanedToken.toLowerCase())) {
-          classPart = "BOOLEAN"
+          classPart = "bool_const"
         } else if (
-          classPart === "STRING" &&
+          classPart === "str_const" &&
           cleanedToken.startsWith('"') &&
           cleanedToken.endsWith('"')
         ) {

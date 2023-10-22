@@ -1,5 +1,5 @@
 public class shapes  {
    public Static main() {
-      public int a;
+      public int a,b,d,c,d;
    }
 }

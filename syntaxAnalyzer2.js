@@ -120,7 +120,7 @@ const Grammar = {
     ["<default_block>"],
     ["null"],
   ],
-  "<case_block>": [["case", "<Const>", ":", "<Body>", "break", ";"]],
+  "<case_block>": [["case", "<const>", ":", "<Body>", "break", ";"]],
   "<default_block>": [["default", ":", "<Body>", "break", ";"]],
 
   //Exception/Try Catch:
@@ -132,14 +132,14 @@ const Grammar = {
   ],
   "<finally_block>": [["{", "<body>", "}"], ["null"]],
   "<except_type>": [["<IC>"]],
-  "<IC>": [["ID"], ["<Const>"]],
+  "<IC>": [["ID"], ["<const>"]],
 
   //Interface Class:
   "<Interface_Dec>": [["interface", "ID", "{", "<Interface_Body>", "}"]],
   "<Interface_Body>": [["public", "<NT>"], ["null"]],
   "<NT>": [["<Interface_Var_Init>", "<NT>"], ["<Fun_Head>", "<NT>"], ["null"]],
   "<Interface_Var_Init>": [["<Static>", "<Init>"], ["<Init>"]],
-  "<Init>": [["DT", "ID", "=", "<Const>", ";"]],
+  "<Init>": [["DT", "ID", "=", "<const>", ";"]],
   "<Fun_Head>": [["ID", "()", ":", "DT"]],
 
   //Class Obj_dec:
@@ -197,7 +197,7 @@ const Grammar = {
   "<E_prime>": [["PM", "<T>", "<E_prime>"], ["null"]],
   "<T>": [["<F>", "<T_prime>"]],
   "<T_prime>": [["MDM", "<F>", "<T_prime>"], ["null"]],
-  "<F>": [["<P>", "ID", "<F1>"], ["<Const>"], ["!", "<F>"]],
+  "<F>": [["<P>", "ID", "<F1>"], ["<const>"], ["!", "<F>"]],
   "<F1>": [
     ["[", "<OE>", "]", "<F1>"],
     ["(", "<AL>", ")", "<F5>"],
@@ -281,24 +281,72 @@ const fs = require("fs")
 // Read tokens from output.txt
 const tokenData = fs.readFileSync("output.txt", "utf8")
 console.log(" tokenData ", tokenData)
-
 const tokens = tokenData
   .split("\n")
   .map(line => {
     const matches = line.match(/\(([^,]+), ([^,]+), LineNo: (\d+)\)/)
     if (matches && matches.length === 4) {
       const [, valuepart, classpart, lineNo] = matches
-      return { valuepart, classpart, lineNo }
+      return {
+        valuepart: valuepart.trim(),
+        classpart: classpart.trim(),
+        lineNo,
+      }
     } else if (line.includes("( $ , $, Line: ")) {
       return {
         valuepart: "$",
         classpart: "$",
         lineNo: parseInt(line.match(/Line: (\d+)/)[1]),
       }
+    } else if (line.includes("( , , ,, LineNo: ")) {
+      return {
+        valuepart: ",",
+        classpart: ",",
+        lineNo: parseInt(line.match(/LineNo: (\d+)/)[1]),
+      }
     }
     return null
   })
   .filter(token => token !== null)
+
+// const tokens = tokenData
+//   .split("\n")
+//   .map(line => {
+//     // const matches = line.match(/\(([^,]+), ([^,]+), LineNo: (\d+)\)/)
+//     const matches = line.match(/\(([^,]+), ([^,]+), LineNo: (\d+)\)/)
+
+//     if (matches && matches.length === 4) {
+//       const [, valuepart, classpart, lineNo] = matches
+//       // return { valuepart, classpart, lineNo }
+//       return { valuepart: valuepart.trim(), classpart, lineNo }
+//     } else if (line.includes("( $ , $, Line: ")) {
+//       return {
+//         valuepart: "$",
+//         classpart: "$",
+//         lineNo: parseInt(line.match(/Line: (\d+)/)[1]),
+//       }
+//     }
+//     return null
+//   })
+//   .filter(token => token !== null)
+
+// const tokens = tokenData
+//   .split("\n")
+//   .map(line => {
+//     const matches = line.match(/\(([^,]+), ([^,]+), LineNo: (\d+)\)/)
+//     if (matches && matches.length === 4) {
+//       const [, valuepart, classpart, lineNo] = matches
+//       return { valuepart, classpart, lineNo }
+//     } else if (line.includes("( $ , $, Line: ")) {
+//       return {
+//         valuepart: "$",
+//         classpart: "$",
+//         lineNo: parseInt(line.match(/Line: (\d+)/)[1]),
+//       }
+//     }
+//     return null
+//   })
+//   .filter(token => token !== null)
 let tokenIndex = 0
 
 console.log("tokens ", tokens)
