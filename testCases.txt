@@ -1,4 +1,6 @@
 public class shapes  {
+ 
+public Static int[] arr = new int[0];
    public Static main() {
       public int a,b,d,c,d;
    }
@@ -6,6 +8,15 @@ public class shapes  {
 
 
 success
+
+class
+public abstract class circle extends shapes 
+public abstract class circle implements a,b,c 
+public abstract class circle implements a
+
+Attributes
+public int a,b,d,c,d;
+public int a;
 public int[] arr;
 public int[] arr = {1,2,3,4};
 public string[] arr = {"abc","dfg"};
@@ -13,9 +24,10 @@ public char[] arr = {'a','b'};
 public double[] arr = {1.23,4.34};
 public int[] arr = new int[0];
 public Static int[] arr = new int[0];
-public int a,b,d,c,d;
+
 
 
 
 failed
 public int a = 10;  <assign_right> 
+shape1 alphabets and numbers not allowed

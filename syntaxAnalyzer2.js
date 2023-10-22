@@ -13,7 +13,7 @@ const Grammar = {
       "$",
     ],
   ],
-  "<Extra>": [["extends"], ["Implements", "<InterfaceIDList>"], ["null"]],
+  "<Extra>": [["extends", "ID"], ["implements", "<InterfaceIDList>"], ["null"]],
   "<InterfaceIDList>": [["ID", "<listID>"]],
   "<listID>": [[",", "ID", "<listID>"], ["null"]],
   "<ClassBody>": [["<AM>", "<ClassBodyDecl>", "<ClassBody>"], ["null"]],
@@ -32,7 +32,12 @@ const Grammar = {
   "<parameter_list>": [[",", "<Parameter>", "<parameter_list>"], ["null"]],
   "<Parameter>": [["DT", "ID"]],
   "<Main_Func>": [["main", "(", ")", "{", "<Body>", "}"]],
-  "<Attributes>": [["DT", "<A>"], ["<ArrayList>"], ["<HashMap>"]],
+  "<Attributes>": [
+    ["DT", "<A>"],
+    ["<ArrayList>"],
+    ["<HashMap>"],
+    ["<array_use>"],
+  ],
   "<A>": [["<Var>"], ["<Arrays>"]],
   "<abstract_fun>": [["abstract", "ID", "(", "<Arguments>", ")", ":", "DT"]],
   "<AM>": [["public"], ["private"]],
@@ -230,7 +235,7 @@ const Grammar = {
     [",", "<const>", "<list_values>"],
     ["null"],
   ],
-  "<array_use>": [["ID", "[", "int", "]", "<array_change_value>"]],
+  "<array_use>": [["ID", "[", "<int_const>", "]", "<array_change_value>"]],
   "<array_change_value>": [[";", "I", "=", "{", "<const>", "}"]],
 
   //List:
