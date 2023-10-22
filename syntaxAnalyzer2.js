@@ -33,7 +33,7 @@ const Grammar = {
   "<Parameter>": [["DT", "ID"]],
   "<Main_Func>": [["main", "(", ")", "{", "<Body>", "}"]],
   "<Attributes>": [["DT", "<A>"], ["<ArrayList>"], ["<HashMap>"]],
-  "<A>": [["<Var>"], ["<Array>"]],
+  "<A>": [["<Var>"], ["<Arrays>"]],
   "<abstract_fun>": [["abstract", "ID", "(", "<Arguments>", ")", ":", "DT"]],
   "<AM>": [["public"], ["private"]],
   // "<AM0>": [["Static"]],
@@ -184,7 +184,13 @@ const Grammar = {
   "<HashMap_operation>": [["<put_operation>"]],
   "<put_operation>": [["put", "(", "<const>", ",", "<const>", ")", ";"]],
 
-  "<const>": [["int_const"], ["bool_const"], ["string_const"], ["char_const"]],
+  "<const>": [
+    ["int_const"],
+    ["bool_const"],
+    ["str_const"],
+    ["char_const"],
+    ["double_const"],
+  ],
 
   //Expression:
   "<OE>": [["<AE>", "<OE_prime>"]],
@@ -212,16 +218,20 @@ const Grammar = {
   "<P>": [["this", "."], ["null"]],
 
   //Arrays;
-  "<Arrays>": [["<Array>", "ID", "<list>", "<array_init>"]],
+  "<Arrays>": [["[", "]", "ID", "<list>", "<array_init>"]],
   "<list>": [[",", "ID", "<list>"], ["null"]],
   "<array_init>": [[";"], ["=", "<AI>"]],
   "<AI>": [
     ["{", "<list_values>", "}", ";"],
     ["new", "DT", "[", "int_const", "]", ";"],
   ],
-  "<list_values>": [["<value>"], [",", "<value>", "<list_values>"], ["null"]],
+  "<list_values>": [
+    ["<const>", "<list_values>"],
+    [",", "<const>", "<list_values>"],
+    ["null"],
+  ],
   "<array_use>": [["ID", "[", "int", "]", "<array_change_value>"]],
-  "<array_change_value>": [[";", "I", "=", "{", "<value>", "}"]],
+  "<array_change_value>": [[";", "I", "=", "{", "<const>", "}"]],
 
   //List:
   // "<WDT>": [["Integer"], ["String"], ["Boolean"], ["Float"], ["Character"]],

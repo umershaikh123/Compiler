@@ -60,10 +60,10 @@ class Lexer {
       "=": ["="],
       extends: ["extends"],
       Integer: ["Integer"],
-      Boolean: ["Boolean"],
-      Double: ["Double"],
-      Character: ["Character"],
-      String: ["String"],
+      // Boolean: ["Boolean"],
+      // Double: ["Double"],
+      // Character: ["Character"],
+      // String: ["String"],
       $: ["$"],
       inc_dec_Op: ["++", "--"],
       // "int_const" : ["int_const"],
@@ -218,7 +218,7 @@ class Lexer {
     }
 
     if (/^"([^\\"]|\\.)+"$/.test(word)) {
-      return "STRING"
+      return "str_const"
     }
 
     // Check if the token is an identifier based on the rules
