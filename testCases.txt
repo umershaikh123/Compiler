@@ -47,8 +47,9 @@ public HashMap  [Integer, Integer]  map = new HashMap [Integer , Integer] ;
 
   }
 
-  
+
 
 failed
 public int a = 10;  <assign_right> 
 shape1 alphabets and numbers not allowed
+public abstract func() : void  fix <Arguments>
