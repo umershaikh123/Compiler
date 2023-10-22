@@ -13,7 +13,6 @@ public char[] arr = {'a','b'};
 public double[] arr = {1.23,4.34};
 public int[] arr = new int[0];
 public Static int[] arr = new int[0];
-
 public int a,b,d,c,d;
 
 
