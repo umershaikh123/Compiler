@@ -67,6 +67,8 @@ const Grammar = {
   "<S>": [
     [".", "<S2>"],
     ["[", "int_const", "]", "<array_change_value>"],
+    ["<Obj_dec>"],
+    ["<func_call>"],
   ],
   "<S2>": [["<D1>"], ["<assign_st>"]],
   "<AM_st>": [["<AM>", "<NS>"]],
@@ -158,8 +160,8 @@ const Grammar = {
   "<Fun_Head>": [["ID", "(", "<Parameters>", ")", ":", "DT", ";"]],
 
   //Class Obj_dec:
-  "<Obj_dec>": [["DT", "ID", "<O1>"]],
-  "<O1>": [[";", "I", "=", "new", "DT", "(", "<Parameters>", ");"]],
+  "<Obj_dec>": [["ID", "<O1>"]],
+  "<O1>": [[";"], ["=", "new", "ID", "(", "<Parameters>", ")", ";"]],
 
   //Dot:
   "<Dot_st>": [["ID", ".", "<D1>"]],
