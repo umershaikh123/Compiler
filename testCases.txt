@@ -49,6 +49,31 @@ public HashMap  [Integer, Integer]  map = new HashMap [Integer , Integer] ;
 
 
 
+//Interfaces and multiple classes
+
+interface cow  {
+    public int a = 10;
+    public Static int a = 10;
+    public animalSound() : int;
+    public animalSound() : int;
+    public animalSound() : int;
+} 
+
+ interface cat  {
+ 
+} 
+
+
+public abstract class circle Implements cat,cow  {
+    
+}
+
+public abstract class circle Implements a,b,c  {
+    
+}  
+
+
+
 failed
 public int a = 10;  <assign_right> 
 shape1 alphabets and numbers not allowed

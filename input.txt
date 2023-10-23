@@ -1,3 +1,21 @@
-public abstract class circle implements a  {
-    public abstract func() : void
+interface cow  {
+    public int a = 10;
+    public Static int a = 10;
+    public animalSound() : int;
+    public animalSound() : int;
+    public animalSound() : int;
+} 
+
+ interface cat  {
+ 
+} 
+
+
+public abstract class circle Implements cat,cow  {
+    
 }
+
+public abstract class circle Implements a,b,c  {
+    
+}  
+

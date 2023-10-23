@@ -1,4 +1,10 @@
 const Grammar = {
+  "<Start>": [
+    ["<ClassDecl>", "<Start>"],
+    ["<Interface_Dec>", "<Start>"],
+
+    ["$"],
+  ],
   //Class:
   "<ClassDecl>": [
     [
@@ -10,10 +16,9 @@ const Grammar = {
       "{",
       "<ClassBody>",
       "}",
-      "$",
     ],
   ],
-  "<Extra>": [["extends", "ID"], ["implements", "<InterfaceIDList>"], ["null"]],
+  "<Extra>": [["extends", "ID"], ["Implements", "<InterfaceIDList>"], ["null"]],
   "<InterfaceIDList>": [["ID", "<listID>"]],
   "<listID>": [[",", "ID", "<listID>"], ["null"]],
   "<ClassBody>": [
@@ -146,11 +151,11 @@ const Grammar = {
 
   //Interface Class:
   "<Interface_Dec>": [["interface", "ID", "{", "<Interface_Body>", "}"]],
-  "<Interface_Body>": [["public", "<NT>"], ["null"]],
-  "<NT>": [["<Interface_Var_Init>", "<NT>"], ["<Fun_Head>", "<NT>"], ["null"]],
-  "<Interface_Var_Init>": [["<Static>", "<Init>"], ["<Init>"]],
+  "<Interface_Body>": [["public", "<NT>", "<Interface_Body>"], ["null"]],
+  "<NT>": [["<Interface_Var_Init>"], ["<Fun_Head>"]],
+  "<Interface_Var_Init>": [["AM0", "<Init>"], ["<Init>"]],
   "<Init>": [["DT", "ID", "=", "<const>", ";"]],
-  "<Fun_Head>": [["ID", "()", ":", "DT"]],
+  "<Fun_Head>": [["ID", "(", "<Parameters>", ")", ":", "DT", ";"]],
 
   //Class Obj_dec:
   "<Obj_dec>": [["DT", "ID", "<O1>"]],
@@ -289,26 +294,6 @@ const Grammar = {
   ],
 }
 
-// const Grammar = {
-//   "<ClassDecl>": [
-//     [
-//       "<ClassAccMod>",
-//       "<ClassNonAccMod>",
-//       "class",
-//       "ID",
-//       "<Extra>",
-//       "{",
-//       "<ClassBody>",
-//       "}",
-//       "$",
-//     ],
-//   ],
-//   "<Extra>": [["extends"], ["Implements"], ["null"]],
-//   "<ClassBody>": [["<AM>", "<ClassBody>"], ["null"]],
-//   "<ClassAccMod>": [["public"], ["private"], ["default"]],
-//   "<ClassNonAccMod>": [["final"], ["abstract"], ["null"]],
-//   "<AM>": [["public"], ["private"]],
-// }
 const fs = require("fs")
 
 // Read tokens from output.txt
@@ -342,44 +327,6 @@ const tokens = tokenData
   })
   .filter(token => token !== null)
 
-// const tokens = tokenData
-//   .split("\n")
-//   .map(line => {
-//     // const matches = line.match(/\(([^,]+), ([^,]+), LineNo: (\d+)\)/)
-//     const matches = line.match(/\(([^,]+), ([^,]+), LineNo: (\d+)\)/)
-
-//     if (matches && matches.length === 4) {
-//       const [, valuepart, classpart, lineNo] = matches
-//       // return { valuepart, classpart, lineNo }
-//       return { valuepart: valuepart.trim(), classpart, lineNo }
-//     } else if (line.includes("( $ , $, Line: ")) {
-//       return {
-//         valuepart: "$",
-//         classpart: "$",
-//         lineNo: parseInt(line.match(/Line: (\d+)/)[1]),
-//       }
-//     }
-//     return null
-//   })
-//   .filter(token => token !== null)
-
-// const tokens = tokenData
-//   .split("\n")
-//   .map(line => {
-//     const matches = line.match(/\(([^,]+), ([^,]+), LineNo: (\d+)\)/)
-//     if (matches && matches.length === 4) {
-//       const [, valuepart, classpart, lineNo] = matches
-//       return { valuepart, classpart, lineNo }
-//     } else if (line.includes("( $ , $, Line: ")) {
-//       return {
-//         valuepart: "$",
-//         classpart: "$",
-//         lineNo: parseInt(line.match(/Line: (\d+)/)[1]),
-//       }
-//     }
-//     return null
-//   })
-//   .filter(token => token !== null)
 let tokenIndex = 0
 
 console.log("tokens ", tokens)
@@ -429,7 +376,7 @@ function parseNonTerminal(nonTerminal) {
 }
 
 function parse() {
-  const startSymbol = "<ClassDecl>"
+  const startSymbol = "<Start>"
   if (parseNonTerminal(startSymbol)) {
     console.log("Successfully parsed the input.")
   } else {

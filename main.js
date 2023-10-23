@@ -11,7 +11,7 @@ class Lexer {
       RO: ["<", ">", "<=", ">=", "!=", "=="],
       MDM: ["*", "/", "%"],
       PM: ["+", "-"],
-      implements: ["implements"],
+      Implements: ["Implements"],
 
       // CONST: [
       //   "int_const" ,
