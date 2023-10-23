@@ -29,8 +29,7 @@ public Static int[] arr = new int[0];
 array_use
 public abstract class circle implements a  {
  
-    arr[0] = 10;
-    arr[2];
+   
 
    public Static main() {
    arr[0] = 10;

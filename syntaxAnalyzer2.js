@@ -24,7 +24,7 @@ const Grammar = {
   "<ClassBody>": [
     ["<AM>", "<ClassBodyDecl>", "<ClassBody>"],
 
-    ["<array_use>", "<ClassBody>"],
+    // ["<array_use>", "<ClassBody>"],
     ["null"],
   ],
   "<ClassBodyDecl>": [

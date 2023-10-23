@@ -3,6 +3,8 @@ public abstract class circle Implements cat,cow  {
     public Static main() {
         Person obj;
         Person obj = new Person();
+          arr[0] = 10;
+    arr[2]; 
     }
 }
  
