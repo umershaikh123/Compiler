@@ -33,10 +33,7 @@ const Grammar = {
     ["AM0", "<L>"],
     ["null"],
   ],
-  "<C>": [
-    ["{", "<Body>", "}"],
-    // ["<return_type>", "{", "<Body>", "}"],
-  ],
+  "<C>": [["{", "<Body>", "}"]],
   "<L>": [["<abstract_fun>"], ["<Main_Func>"], ["<Attributes>"]],
   "<Parameters>": [["DT", "ID", "<parameter_list>"], ["null"]],
   "<parameter_list>": [[",", "DT", "ID", "<parameter_list>"], ["null"]],
@@ -70,7 +67,10 @@ const Grammar = {
     ["<Obj_dec>"],
     ["<func_call>"],
   ],
-  "<S2>": [["<D1>"], ["<assign_st>"]],
+  "<S2>": [
+    ["<D1>"],
+    //  ["<assign_st>"]
+  ],
   "<AM_st>": [["<AM>", "<NS>"]],
   "<NS>": [["AM0", "<ST>"], ["<ST>"]],
   "<ST>": [["<Attributes>"], ["ID", "<func_st>"]],
@@ -119,9 +119,7 @@ const Grammar = {
   "<Z>": [[".", "<D1>"], ["null"]],
 
   //func St:
-  "<func_St>": [
-    ["(", "<Parameters>", ")", ":", "<return_type>", "{", "<Body>", "}"],
-  ],
+  "<func_St>": [["(", "<Parameters>", ")", ":", "<const>", "{", "<Body>", "}"]],
   //   "<Parameters>": [["<Parameter>"], ["<parameter_list>"], ["null"]],
   //   "<parameter_list>": [[",", "<Parameter>", "<parameter_list>"], ["null"]],
   //   "<Parameter>": [["DT", "ID"]],
@@ -220,7 +218,7 @@ const Grammar = {
   "<E_prime>": [["PM", "<T>", "<E_prime>"], ["null"]],
   "<T>": [["<F>", "<T_prime>"]],
   "<T_prime>": [["MDM", "<F>", "<T_prime>"], ["null"]],
-  "<F>": [["<P>", "ID", "<F1>"], ["<const>"], ["!", "<F>"]],
+  "<F>": [["<P>", "ID", "<F1>"], ["<const>", ";"], ["!", "<F>"], ["null"]],
   "<F1>": [
     ["[", "<OE>", "]", "<F1>"],
     ["(", "<AL>", ")", "<F5>"],
