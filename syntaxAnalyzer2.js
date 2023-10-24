@@ -2,7 +2,6 @@ const Grammar = {
   "<Start>": [
     ["<ClassDecl>", "<Start>"],
     ["<Interface_Dec>", "<Start>"],
-
     ["$"],
   ],
   //Class:
@@ -60,6 +59,7 @@ const Grammar = {
     ["<Switch_St>"],
     ["<try_catch_block>"],
     ["ID", "<S>"],
+    ["DT", "ID", "=", "<assign_right>", ";"],
   ],
   "<S>": [
     [".", "<S2>"],
@@ -73,7 +73,7 @@ const Grammar = {
   ],
   "<AM_st>": [["<AM>", "<NS>"]],
   "<NS>": [["AM0", "<ST>"], ["<ST>"]],
-  "<ST>": [["<Attributes>"], ["ID", "<func_st>"]],
+  "<ST>": [["<Attributes>"], ["ID", "<func_St>"]],
   "<MST>": [["<SST>", "<MST>"], ["null"]],
 
   //Var Dec+Init:
@@ -114,12 +114,12 @@ const Grammar = {
 
   //Assignment_St:
   "<assign_st>": [["<assign_left>", "=", "<assign_right>"]],
-  "<assign_left>": [[".", "FieldID"], ["null"]],
+  "<assign_left>": [["DT", "ID"], ["null"]],
   "<assign_right>": [["<OE>", "<Z>"]],
   "<Z>": [[".", "<D1>"], ["null"]],
 
   //func St:
-  "<func_St>": [["(", "<Parameters>", ")", ":", "<const>", "{", "<Body>", "}"]],
+  "<func_St>": [["(", "<Parameters>", ")", ":", "DT", "{", "<Body>", "}"]],
   //   "<Parameters>": [["<Parameter>"], ["<parameter_list>"], ["null"]],
   //   "<parameter_list>": [[",", "<Parameter>", "<parameter_list>"], ["null"]],
   //   "<Parameter>": [["DT", "ID"]],
@@ -159,7 +159,7 @@ const Grammar = {
 
   //Class Obj_dec:
   "<Obj_dec>": [["ID", "<O1>"]],
-  "<O1>": [[";"], ["=", "new", "ID", "(", "<Parameters>", ")", ";"]],
+  "<O1>": [[";"], ["=", "new", "ID", "(", "<Argument>", ")", ";"]],
 
   //Dot:
   "<Dot_st>": [["ID", ".", "<D1>"]],
@@ -176,7 +176,11 @@ const Grammar = {
     ,
   ],
   "<Object_operations>": [["ID", "<Object_operations_tail>"]],
-  "<Object_operations_tail>": [["<func_call>"], ["null"]],
+  "<Object_operations_tail>": [
+    ["<func_call>"],
+    ["=", "<assign_right>", ";"],
+    ["null"],
+  ],
   "<array_operations>": [["length"]],
   "<Common_operations>": [
     ["<get_operation>"],
