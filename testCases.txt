@@ -1,3 +1,7 @@
+
+
+
+
 public class shapes  {
  
 public Static int[] arr = new int[0];
@@ -82,7 +86,117 @@ public abstract class circle Implements cat,cow  {
 }
 
 
-failed
-public int a = 10;  <assign_right> 
-shape1 alphabets and numbers not allowed
-public abstract func() : void  fix <Arguments>
+     public fun() : int {
+
+    }
+
+
+
+public Static main() {
+ int a += 2; 
+}
+
+
+public abstract fun(int a, int b) : int ;
+
+
+do {
+        
+}
+while(a <= 20 && b > 50 || d < 2) ;
+
+
+if(20>18){
+    public int a = 20;
+    }
+  else if (20>18) {
+      public string s  = "abc";
+  }
+  else if (20>18) {
+      public string s  = "abc";
+  }
+
+  else{
+      public string s  = "abc";
+  }
+
+
+  for (int a; i < 0; i ++) {
+
+  }
+
+  a.b[3] = 10;
+  a.b = 10;
+  a.func();
+  a.b;
+  arr.length;
+
+  arr.clear();
+  arr.size();
+  arrList.set(2,2);
+  hash.put(2,3);
+
+
+  interface cow  {
+    public int a = 10;
+    public Static int a = 10;
+    public animalSound() : int;
+    public animalSound() : int;
+    public animalSound() : int;
+} 
+
+ interface cat  {
+ 
+} 
+
+
+public abstract class Person implements cow , cat {
+    public string name;
+    public int age;
+    
+    public Person(int age, int number):void {
+    this.name = name;
+    this.age = age;
+}
+
+public Static main () {
+    Person p = new Person("John", 25);
+    p.greet(a,b);
+
+
+    if(20>18){
+      public int a = 20;
+      }
+    else{
+        public string s  = "abc";
+    }
+
+    while(a <= 20 && b > 50 || d < 2) {
+
+    }
+
+
+}
+
+
+}
+
+
+public class circle extends a,b,c  {
+    
+}  
+
+
+public func (int age, int number):void {
+    this.name = name;
+    this.age = age;
+}
+
+    public constructor (int age, int number)  {
+    this.name = name;
+    this.age = age;
+}
+
+public Static func (int age, int number) : void {
+    
+}

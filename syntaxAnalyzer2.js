@@ -2,6 +2,7 @@ const Grammar = {
   "<Start>": [
     ["<ClassDecl>", "<Start>"],
     ["<Interface_Dec>", "<Start>"],
+
     ["$"],
   ],
   //Class:
@@ -17,7 +18,12 @@ const Grammar = {
       "}",
     ],
   ],
-  "<Extra>": [["extends", "ID"], ["Implements", "<InterfaceIDList>"], ["null"]],
+  "<Extra>": [
+    ["extends", "<InterfaceIDList>"],
+    ["implements", "<InterfaceIDList>"],
+    ["null"],
+  ],
+
   "<InterfaceIDList>": [["ID", "<listID>"]],
   "<listID>": [[",", "ID", "<listID>"], ["null"]],
   "<ClassBody>": [
@@ -27,13 +33,30 @@ const Grammar = {
     ["null"],
   ],
   "<ClassBodyDecl>": [
-    ["ID", "(", "<Parameters>", ")", "<C>"],
-    ["<L>"],
-    ["AM0", "<L>"],
-    ["null"],
+    ["ID", "<Func>"],
+    [
+      // ["ID", "(", "<Parameters>", ")", "<C>"],
+      "<L>",
+    ],
+    ["<abstract_fun>"],
+    ["AM0", "<STF>"],
+    // ["null"],
   ],
-  "<C>": [["{", "<Body>", "}"]],
-  "<L>": [["<abstract_fun>"], ["<Main_Func>"], ["<Attributes>"]],
+
+  "<STF>": [["ID", "<func_St>"], ["<L>"], ["<Main_Func>"]],
+  "<Func>": [
+    ["(", "<Parameters>", ")", "<C>"],
+    // ["AM0", "<func_St>"],
+  ],
+  "<C>": [
+    ["{", "<Body>", "}"],
+    [":", "DT", "{", "<Body>", "}"],
+  ],
+  "<L>": [
+    // ["<abstract_fun>"],
+    // ["<Main_Func>"],
+    ["<Attributes>"],
+  ],
   "<Parameters>": [["DT", "ID", "<parameter_list>"], ["null"]],
   "<parameter_list>": [[",", "DT", "ID", "<parameter_list>"], ["null"]],
   // "<Parameters>": [["<Parameter>"], ["<parameter_list>"], ["null"]],
@@ -42,7 +65,9 @@ const Grammar = {
   "<Main_Func>": [["main", "(", ")", "{", "<Body>", "}"]],
   "<Attributes>": [["DT", "<A>"], ["<ArrayList>"], ["<HashMap>"]],
   "<A>": [["<Var>"], ["<Arrays>"]],
-  "<abstract_fun>": [["abstract", "ID", "(", "<Arguments>", ")", ":", "DT"]],
+  "<abstract_fun>": [
+    ["abstract", "ID", "(", "<Parameters>", ")", ":", "DT", ";"],
+  ],
   "<AM>": [["public"], ["private"]],
   // "<AM0>": [["Static"]],
   "<ClassAccMod>": [["public"], ["private"], ["default"]],
@@ -59,28 +84,32 @@ const Grammar = {
     ["<Switch_St>"],
     ["<try_catch_block>"],
     ["ID", "<S>"],
-    ["DT", "ID", "=", "<assign_right>", ";"],
+    ["DT", "ID", "<EQ>", "<assign_right>", ";"],
   ],
+
+  "<EQ>": [["AO"], ["="]],
+
   "<S>": [
-    [".", "<S2>"],
+    [".", "<S2>", ";"],
     ["[", "int_const", "]", "<array_change_value>"],
     ["<Obj_dec>"],
-    ["<func_call>"],
+    // ["<func_call>"],
   ],
   "<S2>": [
     ["<D1>"],
+
     //  ["<assign_st>"]
   ],
   "<AM_st>": [["<AM>", "<NS>"]],
   "<NS>": [["AM0", "<ST>"], ["<ST>"]],
-  "<ST>": [["<Attributes>"], ["ID", "<func_St>"]],
+  "<ST>": [["<Attributes>"]],
   "<MST>": [["<SST>", "<MST>"], ["null"]],
 
   //Var Dec+Init:
   "<Var>": [["ID", "<V>"]],
-  "<V>": [["<Var_Dec>"], ["=", "<V2>"]],
+  "<V>": [["<Var_Dec>"], ["<EQ>", "<V2>"]],
   "<Var_Dec>": [[",", "ID", "<Var_Dec>"], [";"]],
-  "<V2>": [["<assign_right>"]],
+  "<V2>": [["<assign_right>", ";"]],
 
   //While loop:
   "<While_St>": [["while", "(", "<OE>", ")", "{", "<Body>", "}"]],
@@ -92,28 +121,29 @@ const Grammar = {
   "<if_else>": [
     ["if", "(", "<OE>", ")", "{", "<Body>", "}", "<O_if_Else>", "<O_Else>"],
   ],
-  "<O_if_Else>": [["else if"], ["null"]],
-  "<O_Else>": [["else"], ["null"]],
+  "<O_if_Else>": [["else if", "(", "<OE>", ")", "{", "<Body>", "}"], ["null"]],
+  "<O_Else>": [["else", "{", "<Body>", "}"], ["null"]],
 
   //for St
   "<for_St>": [
-    ["for", "(", "<Var>", ";", "<F2>", ";", "<F3>", ")", "{", "<Body>", "}"],
+    ["for", "(", "DT", "<Var>", "<F2>", "<F3>", ")", "{", "<Body>", "}"],
   ],
   "<F2>": [["<OE>"], ["null"]],
   "<F3>": [
     ["ID", "<F4>"],
-    ["<inc_dec_Op>", "ID", ";"],
+    ["inc_dec_Op", "ID"],
   ],
   "<F4>": [
-    ["<inc_dec_Op>", ";"],
-    ["=", "<assign_right>"],
+    // ["inc_dec_Op", ";"],
+    ["inc_dec_Op"],
+    ["A0", "<assign_right>"],
   ],
 
   //Inc_Dec OP:
   "<inc_dec_Op>": [["++"], ["--"]],
 
   //Assignment_St:
-  "<assign_st>": [["<assign_left>", "=", "<assign_right>"]],
+  "<assign_st>": [["<assign_left>", "<EQ>", "<assign_right>"]],
   "<assign_left>": [["DT", "ID"], ["null"]],
   "<assign_right>": [["<OE>", "<Z>"]],
   "<Z>": [[".", "<D1>"], ["null"]],
@@ -125,7 +155,7 @@ const Grammar = {
   //   "<Parameter>": [["DT", "ID"]],
 
   //Func Call:
-  "<func_call>": [["(", "<Arguments>", ")"]],
+  "<func_call>": [["(", "<AL>", ")"]],
   "<Arguments>": [["<OE>"]],
 
   //Switch:
@@ -154,12 +184,17 @@ const Grammar = {
   "<Interface_Body>": [["public", "<NT>", "<Interface_Body>"], ["null"]],
   "<NT>": [["<Interface_Var_Init>"], ["<Fun_Head>"]],
   "<Interface_Var_Init>": [["AM0", "<Init>"], ["<Init>"]],
-  "<Init>": [["DT", "ID", "=", "<const>", ";"]],
+  "<Init>": [["DT", "ID", "<EQ>", "<const>", ";"]],
   "<Fun_Head>": [["ID", "(", "<Parameters>", ")", ":", "DT", ";"]],
 
   //Class Obj_dec:
   "<Obj_dec>": [["ID", "<O1>"]],
-  "<O1>": [[";"], ["=", "new", "ID", "(", "<Argument>", ")", ";"]],
+  "<O1>": [[";"], ["=", "new", "ID", "(", "<AL>", ")", ";"]],
+  "<Next_Arguments>": [["<Arguments>", "<listA>"]],
+  "<listA>": [[",", "<Arguments>", "<list>"], ["null"]],
+  // "<InterfaceIDList>": [["ID", "<listID>"]],
+  // "<listID>": [[",", "ID", "<listID>"], ["null"]],
+  // "<Mult_Arguments>" : [[""] , ""]
 
   //Dot:
   "<Dot_st>": [["ID", ".", "<D1>"]],
@@ -170,15 +205,16 @@ const Grammar = {
 
     ["<ArrayList_operations>"],
 
-    ["<HashMap_operations>"],
+    ["<HashMap_operation>"],
 
     ["<array_operations>"],
     ,
+    ["<func_call>", ";"],
   ],
   "<Object_operations>": [["ID", "<Object_operations_tail>"]],
   "<Object_operations_tail>": [
-    ["<func_call>"],
-    ["=", "<assign_right>", ";"],
+    ["<func_call>", ";"],
+    ["<EQ>", "<assign_right>", ";"],
     ["null"],
   ],
   "<array_operations>": [["length"]],
@@ -188,20 +224,20 @@ const Grammar = {
     ["<clear_operation>"],
     ["<size_operation>"],
   ],
-  "<get_operation>": [["get", "(", "<go>", ")", ";"]],
+  "<get_operation>": [["get", "(", "<go>", ")"]],
 
   "<bsc_const>": [["bool_const"], ["string_const"], ["char_const"]],
-  "<remove_operation>": [["remove", "(", "<go>", ")", ";"]],
-  "<clear_operation>": [["clear", "(", ")", ";"]],
-  "<size_operation>": [["size", "(", ")", ";"]],
+  "<remove_operation>": [["remove", "(", "<go>", ")"]],
+  "<clear_operation>": [["clear", "(", ")"]],
+  "<size_operation>": [["size", "(", ")"]],
   "<index>": [["int_const"]],
   "<go>": [["<index>"], ["<bsc_const>"]],
   "<ArrayList_operations>": [["<add_operation>"], ["<set_operation>"]],
-  "<add_operation>": [["add", "(", "<OE>", ")", ";"]],
-  "<set_operation>": [["set", "(", "<index>", ",", "<const>", ")", ";"]],
+  "<add_operation>": [["add", "(", "<OE>", ")"]],
+  "<set_operation>": [["set", "(", "<index>", ",", "<const>", ")"]],
 
   "<HashMap_operation>": [["<put_operation>"]],
-  "<put_operation>": [["put", "(", "<const>", ",", "<const>", ")", ";"]],
+  "<put_operation>": [["put", "(", "<const>", ",", "<const>", ")"]],
 
   "<const>": [
     ["int_const"],
@@ -227,7 +263,7 @@ const Grammar = {
     ["[", "<OE>", "]", "<F1>"],
     ["(", "<AL>", ")", "<F5>"],
     [".", "ID", "<F1>"],
-    ["<inc_dec_Op>"],
+    ["inc_dec_Op"],
     ["null"],
   ],
   "<F5>": [[".", "ID", "<F1>"], ["[", "<OE>", "]", "<F1>"], ["null"]],
@@ -239,7 +275,7 @@ const Grammar = {
   //Arrays;
   "<Arrays>": [["[", "]", "ID", "<list>", "<array_init>"]],
   "<list>": [[",", "ID", "<list>"], ["null"]],
-  "<array_init>": [[";"], ["=", "<AI>"]],
+  "<array_init>": [[";"], ["<EQ>", "<AI>"]],
   "<AI>": [
     ["{", "<list_values>", "}", ";"],
     ["new", "DT", "[", "int_const", "]", ";"],
@@ -250,7 +286,7 @@ const Grammar = {
     ["null"],
   ],
   "<array_use>": [["ID", "[", "int_const", "]", "<array_change_value>"]],
-  "<array_change_value>": [[";"], ["=", "<const>", ";"]],
+  "<array_change_value>": [[";"], ["<EQ>", "<const>", ";"]],
 
   //List:
   // "<WDT>": [["Integer"], ["String"], ["Boolean"], ["Float"], ["Character"]],

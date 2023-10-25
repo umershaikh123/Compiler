@@ -8,11 +8,12 @@ class Lexer {
       DT: ["void", "int", "bool", "double", "char", "string"],
       // void: ["void"],
       WDT: ["Integer", "Boolean", "Character", "String", "Double"],
+      "=": ["="],
       RO: ["<", ">", "<=", ">=", "!=", "=="],
       MDM: ["*", "/", "%"],
       PM: ["+", "-"],
-      Implements: ["Implements"],
-
+      implements: ["implements"],
+      AO: ["+=", "-=", "*=", "/=", "%="],
       // CONST: [
       //   "int_const" ,
       //   "bool_const",
@@ -21,7 +22,7 @@ class Lexer {
       //   "str_const",
       // ],
       // AM: ["public", "private"],
-
+      put: ["put"],
       // int_const: ["int_const"],
       // bool_const: ["bool_const"],
       // double_const: ["double_const"],
@@ -73,7 +74,7 @@ class Lexer {
       // "char_const" : ["char_const"],
       // "str_const" : ["str_const"],
       "!": ["!"],
-      " ||": [" ||"],
+      "||": ["||"],
       "&&": ["&&"],
 
       add: ["add"],
@@ -139,7 +140,7 @@ class Lexer {
       // OR_CLASS: ["||"],
       // NOT_CLASS: ["!"],
       // INC_DEC: ["++", "--"],
-      ASSIGN_OP: ["+=", "-=", "*=", "/=", "%="],
+
       // BINARY_OP: [
       //   "+=",
       //   "-=",
