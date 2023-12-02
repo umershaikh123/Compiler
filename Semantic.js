@@ -1,12 +1,13 @@
 class SemanticAnalyzer {
   constructor() {
-    this.mainTable = [] // Main Table for classes, interfaces, abstract classes
-    this.currentScopeTable = null // Current Scope Table
-    this.scopeCounter = 0 // Counter for generating unique scope IDs
+    this.mainTable = []
+    this.currentScopeTable = null
+    this.scopeCounter = 0
   }
 
   createScopeTable() {
     this.currentScopeTable = []
+    this.scopeCounter++
   }
 
   insertDataIntoMainTable(name, type, accessModifier, typeModifier, parent) {
@@ -96,10 +97,41 @@ class SemanticAnalyzer {
   }
 
   typeCheck(leftOperandType, rightOperandType, operator) {
+    // Implement your type checking logic here
     // Return true if types match, false otherwise
-    // Hard code type check information
   }
 }
+
+// Assume we have the following Java-like code
+const javaCode = `
+class MyClass {
+  private int myAttribute;
+
+  public void myMethod() {
+    int localVar = 42;
+    {
+      int innerVar = 10;
+    }
+  }
+
+  public void anotherMethod() {
+    float floatVar = 3.14;
+  }
+}
+
+public class MainClass {
+  public static void main(String[] args) {
+    int mainVar = 100;
+    {
+      int innerMainVar = 50;
+    }
+
+    MyClass myObject = new MyClass();
+    myObject.myMethod();
+    myObject.anotherMethod();
+  }
+}
+`
 
 const semanticAnalyzer = new SemanticAnalyzer()
 
@@ -113,7 +145,6 @@ semanticAnalyzer.insertDataIntoMainTable(
   null,
   null
 )
-
 semanticAnalyzer.insertDataIntoMemberTable(
   "MyClass",
   "myAttribute",
@@ -122,31 +153,50 @@ semanticAnalyzer.insertDataIntoMemberTable(
   null
 )
 
-// Enter the method scope and insert data into the scope table
-semanticAnalyzer.createScopeTable() // Create a new scope for the method
+semanticAnalyzer.insertDataIntoMemberTable(
+  "MyClass",
+  "myMethod",
+  "int",
+  "private",
+  null
+)
+semanticAnalyzer.createScopeTable()
 semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
-
-// Enter an inner block scope and insert data into the scope table
-semanticAnalyzer.createScopeTable() // Create a new scope for the inner block
+semanticAnalyzer.createScopeTable()
 semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("floatVar", "float")
 
-// // Example Usage:
-// semanticAnalyzer.createScopeTable()
-// semanticAnalyzer.insertDataIntoMainTable(
-//   "MyClass",
-//   "Class",
-//   "public",
-//   null,
-//   null
-// )
-// semanticAnalyzer.insertDataIntoMemberTable(
-//   "MyClass",
-//   "myAttribute",
-//   "int",
-//   "private",
-//   null
-// )
-// semanticAnalyzer.insertDataIntoScopeTable("variable1", "int")
+// Analyze MainClass
+semanticAnalyzer.insertDataIntoMainTable(
+  "MainClass",
+  "Class",
+  "public",
+  null,
+  null
+)
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("mainVar", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
 
-console.log("Main Table:", semanticAnalyzer.mainTable)
+// Log the results
+console.log("Main Table:")
+
+for (const entry of semanticAnalyzer.mainTable) {
+  console.log({
+    Name: entry.Name,
+    Type: entry.Type,
+    AccessModifier: entry.AccessModifier,
+    TypeModifier: entry.TypeModifier,
+    Parent: entry.Parent,
+    MemberTable: entry.MemberTable.map(member => ({
+      Name: member.Name,
+      Type: member.Type,
+      AccessModifier: member.AccessModifier,
+      TypeModifier: member.TypeModifier,
+    })),
+  })
+}
+
 console.log("End of Semantic Analysis.")
