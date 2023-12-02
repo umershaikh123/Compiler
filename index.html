@@ -142,26 +142,6 @@
       }
     }
 
-  
-    semanticAnalyzer.createScopeTable();
-    semanticAnalyzer.insertDataIntoMainTable("MyClass", "Class", "public", null, null);
-    semanticAnalyzer.insertDataIntoMemberTable("MyClass", "myAttribute", "int", "private", null);
-    semanticAnalyzer.insertDataIntoMemberTable("MyClass", "myMethod", "int", "private", null);
-    semanticAnalyzer.createScopeTable();
-    semanticAnalyzer.insertDataIntoScopeTable("localVar", "int");
-    semanticAnalyzer.createScopeTable();
-    semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int");
-    semanticAnalyzer.createScopeTable();
-    semanticAnalyzer.insertDataIntoScopeTable("floatVar", "float");
-
-   
-    semanticAnalyzer.insertDataIntoMainTable("MainClass", "Class", "public", null, null);
-    semanticAnalyzer.createScopeTable();
-    semanticAnalyzer.insertDataIntoScopeTable("mainVar", "int");
-    semanticAnalyzer.createScopeTable();
-    semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int");
-
-  
     renderMainTable();
     renderMemberTables();
     renderScopeTable();
