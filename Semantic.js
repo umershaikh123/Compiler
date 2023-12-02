@@ -111,6 +111,8 @@ class SemanticAnalyzer {
       },
       string: { "+=": "string" },
       boolean: {},
+      object: { "=": "object" },
+      array: { "=": "array" },
     },
     array: {
       int: "int_array",
