@@ -1,12 +1,11 @@
 class SemanticAnalyzer {
   constructor() {
     this.mainTable = []
-    this.currentScopeTable = null
+    this.currentScopeTable = []
     this.scopeCounter = 0
   }
 
   createScopeTable() {
-    this.currentScopeTable = []
     this.scopeCounter++
   }
 
@@ -198,5 +197,12 @@ for (const entry of semanticAnalyzer.mainTable) {
     })),
   })
 }
-
+console.log("Scope Table:")
+for (const entry of semanticAnalyzer.currentScopeTable) {
+  console.log({
+    Name: entry.Name,
+    Type: entry.Type,
+    Scope: entry.Scope,
+  })
+}
 console.log("End of Semantic Analysis.")
