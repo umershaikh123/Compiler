@@ -8,6 +8,7 @@ class SemanticAnalyzer {
   typeCheckInfo = {
     // parsing resultType = typecheckInfo.binary. [leftOP][operator][rightOP]
 
+    //.binary
     binary: {
       // .[leftop]
       int: {

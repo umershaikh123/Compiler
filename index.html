@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semantic Analyzer Tables</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    table {
+       
+      border-collapse: collapse;
+      width: fit-content;
+      margin-bottom: 50px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    h4 {
+        font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+
+  
+    <h2>Main Table</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Access Modifier</th>
+          <th>Type Modifier</th>
+          <th>Parent</th>
+        </tr>
+      </thead>
+      <tbody id="mainTableBody"></tbody>
+    </table>
+  
+    <h2>Member Tables</h2>
+    <div id="memberTablesContainer"></div>
+  
+    <h2>Scope Table</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Scope</th>
+        </tr>
+      </thead>
+      <tbody id="scopeTableBody"></tbody>
+    </table>
+  
+ 
+    <script src="/Compiler/Semantic.js"></script>
+  <script  >
+   
+
+    function renderMainTable() {
+      const mainTableBody = document.getElementById('mainTableBody');
+      mainTableBody.innerHTML = '';
+
+      for (const entry of semanticAnalyzer.mainTable) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${entry.Name}</td>
+          <td>${entry.Type}</td>
+          <td>${entry.AccessModifier}</td>
+          <td>${entry.TypeModifier}</td>
+          <td>${entry.Parent}</td>
+        `;
+        mainTableBody.appendChild(row);
+      }
+    }
+
+  
+    function renderMemberTables() {
+      const memberTablesContainer = document.getElementById('memberTablesContainer');
+      memberTablesContainer.innerHTML = '';
+
+      for (const entry of semanticAnalyzer.mainTable) {
+        if (entry.MemberTable.length > 0) {
+          const memberTableDiv = document.createElement('div');
+          memberTableDiv.innerHTML = `
+            <h4>${entry.Name} Member Table</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Access Modifier</th>
+                  <th>Type Modifier</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${renderMemberTableRows(entry.MemberTable)}
+              </tbody>
+            </table>
+          `;
+          memberTablesContainer.appendChild(memberTableDiv);
+        }
+      }
+    }
+ 
+    function renderMemberTableRows(memberTable) {
+      return memberTable.map(member => `
+        <tr>
+          <td>${member.Name}</td>
+          <td>${member.Type}</td>
+          <td>${member.AccessModifier}</td>
+          <td>${member.TypeModifier}</td>
+        </tr>
+      `).join('');
+    }
+
+  
+    function renderScopeTable() {
+      const scopeTableBody = document.getElementById('scopeTableBody');
+      scopeTableBody.innerHTML = '';
+
+      for (const entry of semanticAnalyzer.currentScopeTable) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${entry.Name}</td>
+          <td>${entry.Type}</td>
+          <td>${entry.Scope}</td>
+        `;
+        scopeTableBody.appendChild(row);
+      }
+    }
+
+  
+    semanticAnalyzer.createScopeTable();
+    semanticAnalyzer.insertDataIntoMainTable("MyClass", "Class", "public", null, null);
+    semanticAnalyzer.insertDataIntoMemberTable("MyClass", "myAttribute", "int", "private", null);
+    semanticAnalyzer.insertDataIntoMemberTable("MyClass", "myMethod", "int", "private", null);
+    semanticAnalyzer.createScopeTable();
+    semanticAnalyzer.insertDataIntoScopeTable("localVar", "int");
+    semanticAnalyzer.createScopeTable();
+    semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int");
+    semanticAnalyzer.createScopeTable();
+    semanticAnalyzer.insertDataIntoScopeTable("floatVar", "float");
+
+   
+    semanticAnalyzer.insertDataIntoMainTable("MainClass", "Class", "public", null, null);
+    semanticAnalyzer.createScopeTable();
+    semanticAnalyzer.insertDataIntoScopeTable("mainVar", "int");
+    semanticAnalyzer.createScopeTable();
+    semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int");
+
+  
+    renderMainTable();
+    renderMemberTables();
+    renderScopeTable();
+  </script>
+
+
+</body>
+</html>
