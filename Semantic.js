@@ -6,8 +6,6 @@ class SemanticAnalyzer {
   }
 
   typeCheckInfo = {
-    // Binary operations
-
     // parsing resultType = typecheckInfo.binary. [leftOP][operator][rightOP]
 
     binary: {
@@ -78,7 +76,7 @@ class SemanticAnalyzer {
         "!=": { boolean: "boolean" },
       },
     },
-    // Unary operations
+
     unary: {
       int: {
         "++": "int",
@@ -95,7 +93,7 @@ class SemanticAnalyzer {
         "!": "boolean",
       },
     },
-    // Assignment operations
+
     assignment: {
       int: {
         "+=": "int",
@@ -112,7 +110,14 @@ class SemanticAnalyzer {
         "%=": "float",
       },
       string: { "+=": "string" },
-      boolean: {}, // No valid assignment operations for boolean
+      boolean: {},
+    },
+    array: {
+      int: "int_array",
+      float: "float_array",
+      string: "string_array",
+      boolean: "boolean_array",
+      object: "object_array",
     },
   }
 
@@ -148,7 +153,7 @@ class SemanticAnalyzer {
   ) {
     const classEntry = this.lookupInMainTable(className)
     if (!classEntry) {
-      console.error(`Class ${className} not found.`)
+      console.error(`undeclare Error Class ${className} not found.`)
       return false
     }
 
@@ -178,7 +183,7 @@ class SemanticAnalyzer {
   lookupInMemberTable(className, name) {
     const classEntry = this.lookupInMainTable(className)
     if (!classEntry) {
-      console.error(`Class ${className} not found.`)
+      console.error(`undeclare Error Class ${className} not found.`)
       return false
     }
 
@@ -193,7 +198,7 @@ class SemanticAnalyzer {
   insertDataIntoScopeTable(name, type) {
     const exists = this.lookupInScopeTable(name)
     if (exists) {
-      console.error(`Re-declare error: ${name} already declared in this scope.`)
+      console.error(`Re-declare Error: ${name} already declared in this scope.`)
       return false
     }
 
@@ -219,7 +224,7 @@ class SemanticAnalyzer {
       ]
     } else {
       console.error(
-        `Type mismatch: ${leftOperandType} ${operator} ${rightOperandType}`
+        `Error : Type mismatch: ${leftOperandType} ${operator} ${rightOperandType}`
       )
       return null // or throw an error, depending on your error handling strategy
     }
@@ -234,7 +239,7 @@ class SemanticAnalyzer {
     ) {
       return this.typeCheckInfo.unary[operandType][operator]
     } else {
-      console.error(`Type mismatch: ${operator}${operandType}`)
+      console.error(`Error : Type mismatch: ${operator}${operandType}`)
       return null // or throw an error, depending on your error handling strategy
     }
   }
