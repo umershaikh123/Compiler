@@ -306,12 +306,6 @@ semanticAnalyzer.insertDataIntoMemberTable(
   "private",
   null
 )
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("floatVar", "float")
 
 // Analyze MainClass
 semanticAnalyzer.insertDataIntoMainTable(
@@ -321,6 +315,35 @@ semanticAnalyzer.insertDataIntoMainTable(
   null,
   null
 )
+semanticAnalyzer.insertDataIntoMemberTable(
+  "MainClass",
+  "myAttribute",
+  "int",
+  "private",
+  null
+)
+
+semanticAnalyzer.insertDataIntoMemberTable(
+  "MainClass",
+  "myMethod",
+  "int",
+  "private",
+  null
+)
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("floatVar", "float")
+
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("a", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("b", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("c", "float")
+
 semanticAnalyzer.createScopeTable()
 semanticAnalyzer.insertDataIntoScopeTable("mainVar", "int")
 semanticAnalyzer.createScopeTable()
