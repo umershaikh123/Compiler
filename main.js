@@ -400,6 +400,7 @@ const lexer = new Lexer("input.txt", "output.txt")
 lexer.tokenize()
 
 lexer.writeTokensToFile()
+
 const Grammar = {
   "<Start>": [
     ["<ClassDecl>", "<Start>"],
