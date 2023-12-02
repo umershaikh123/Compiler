@@ -416,8 +416,11 @@ const Grammar = {
       "class",
       "ID",
       "<Extra>",
+      //  insert into MainTable
       "{",
+
       "<ClassBody>",
+      // insert into member table
       "}",
     ],
   ],

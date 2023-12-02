@@ -96,15 +96,16 @@ class SemanticAnalyzer {
   }
 
   typeCheck(leftOperandType, rightOperandType, operator) {
-    // Implement your type checking logic here
     // Return true if types match, false otherwise
+    // Hard code type check information
   }
 }
 
 const semanticAnalyzer = new SemanticAnalyzer()
 
-// Example Usage:
+// Start semantic analysis
 semanticAnalyzer.createScopeTable()
+
 semanticAnalyzer.insertDataIntoMainTable(
   "MyClass",
   "Class",
@@ -112,6 +113,7 @@ semanticAnalyzer.insertDataIntoMainTable(
   null,
   null
 )
+
 semanticAnalyzer.insertDataIntoMemberTable(
   "MyClass",
   "myAttribute",
@@ -119,6 +121,32 @@ semanticAnalyzer.insertDataIntoMemberTable(
   "private",
   null
 )
-semanticAnalyzer.insertDataIntoScopeTable("variable1", "int")
 
-// Perform more operations and semantic analysis as needed...
+// Enter the method scope and insert data into the scope table
+semanticAnalyzer.createScopeTable() // Create a new scope for the method
+semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
+
+// Enter an inner block scope and insert data into the scope table
+semanticAnalyzer.createScopeTable() // Create a new scope for the inner block
+semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
+
+// // Example Usage:
+// semanticAnalyzer.createScopeTable()
+// semanticAnalyzer.insertDataIntoMainTable(
+//   "MyClass",
+//   "Class",
+//   "public",
+//   null,
+//   null
+// )
+// semanticAnalyzer.insertDataIntoMemberTable(
+//   "MyClass",
+//   "myAttribute",
+//   "int",
+//   "private",
+//   null
+// )
+// semanticAnalyzer.insertDataIntoScopeTable("variable1", "int")
+
+console.log("Main Table:", semanticAnalyzer.mainTable)
+console.log("End of Semantic Analysis.")
