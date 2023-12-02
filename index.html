@@ -31,6 +31,15 @@
         font-weight: 400;
         text-decoration: underline;
     }
+
+    p {
+      color: red;
+    }
+
+    .errors{
+      color: red;
+     
+    }
   </style>
 </head>
 <body>
@@ -65,10 +74,26 @@
       <tbody id="scopeTableBody"></tbody>
     </table>
   
- 
+    <h2>Errors</h2>
+    <div id="errorsContainer"></div>
     <script src="/Compiler/Semantic.js"></script>
   <script  >
    
+   function renderErrors() {
+      const errorsContainer = document.getElementById('errorsContainer');
+      errorsContainer.innerHTML = '';
+
+ 
+        const errorDiv = document.createElement('div');
+
+        // for  ( let error of semanticAnalyzer.error) {
+        //   errorDiv.innerHTML = `<div class="errors"> ${error ? `${error}` :"No Errors" }</div>`;
+        // errorsContainer.appendChild(errorDiv);
+        // }
+        errorDiv.innerHTML = `<div class="errors">  ${semanticAnalyzer.error ? `${semanticAnalyzer.error}` :"No Errors" }</div>`;
+        errorsContainer.appendChild(errorDiv);
+      
+    }
 
     function renderMainTable() {
       const mainTableBody = document.getElementById('mainTableBody');
@@ -148,6 +173,7 @@
     renderMainTable();
     renderMemberTables();
     renderScopeTable();
+    renderErrors();
   </script>
 
 

@@ -3,6 +3,7 @@ class SemanticAnalyzer {
     this.mainTable = []
     this.currentScopeTable = []
     this.scopeCounter = 0
+    this.error = []
   }
 
   typeCheckInfo = {
@@ -131,7 +132,9 @@ class SemanticAnalyzer {
   insertDataIntoMainTable(name, type, accessModifier, typeModifier, parent) {
     const exists = this.lookupInMainTable(name)
     if (exists) {
-      console.error(`Re-declare error: ${name} already declared.`)
+      const ErrorMessage = `Re-declare error: ${name} already declared.`
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
       return false
     }
 
@@ -156,16 +159,21 @@ class SemanticAnalyzer {
   ) {
     const classEntry = this.lookupInMainTable(className)
     if (!classEntry) {
-      console.error(`undeclare Error Class ${className} not found.`)
+      const ErrorMessage = `undeclare Error Class ${className} not found.`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
       return false
     }
 
     const memberTable = classEntry.MemberTable
     const exists = this.lookupInMemberTable(className, name)
     if (exists) {
-      console.error(
-        `Re-declare error: ${name} already declared in class ${className}.`
-      )
+      const ErrorMessage = `Re-declare error: ${name} already declared in class ${className}.`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
       return false
     }
 
@@ -186,7 +194,11 @@ class SemanticAnalyzer {
   lookupInMemberTable(className, name) {
     const classEntry = this.lookupInMainTable(className)
     if (!classEntry) {
-      console.error(`undeclare Error Class ${className} not found.`)
+      const ErrorMessage = `undeclare Error Class ${className} not found.`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
       return false
     }
 
@@ -201,7 +213,11 @@ class SemanticAnalyzer {
   insertDataIntoScopeTable(name, type) {
     const exists = this.lookupInScopeTable(name)
     if (exists) {
-      console.error(`Re-declare Error: ${name} already declared in this scope.`)
+      const ErrorMessage = `Re-declare Error: ${name} already declared in this scope.`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
       return false
     }
 
@@ -226,9 +242,11 @@ class SemanticAnalyzer {
         rightOperandType
       ]
     } else {
-      console.error(
-        `Error : Type mismatch: ${leftOperandType} ${operator} ${rightOperandType}`
-      )
+      const ErrorMessage = `Error : Type mismatch: ${leftOperandType} ${operator} ${rightOperandType}`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
       return null // or throw an error, depending on your error handling strategy
     }
   }
@@ -242,7 +260,11 @@ class SemanticAnalyzer {
     ) {
       return this.typeCheckInfo.unary[operandType][operator]
     } else {
-      console.error(`Error : Type mismatch: ${operator}${operandType}`)
+      const ErrorMessage = `Error : Type mismatch: ${operator}${operandType}`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
       return null // or throw an error, depending on your error handling strategy
     }
   }
@@ -349,6 +371,7 @@ semanticAnalyzer.insertDataIntoScopeTable("mainVar", "int")
 semanticAnalyzer.createScopeTable()
 semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
 
+semanticAnalyzer.lookupInMemberTable("Animal", "c")
 // Log the results
 console.log("Main Table:")
 
