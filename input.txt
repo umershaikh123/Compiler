@@ -1,20 +1,13 @@
 public class Person {
     public string name;
     public int age;
-
-    public Person(string name,int age):void {
-    this.name = name;
-    this.age = age;
+ 
+    public Static main(){
+    p.greet();
     }
 
-    public Static main(){
-   
-    p.greet();
-}
-}
-public greet():void {
-  public int a = 2;
- }
 
+}
+ 
 
 
