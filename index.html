@@ -86,10 +86,7 @@
  
         const errorDiv = document.createElement('div');
 
-        // for  ( let error of semanticAnalyzer.error) {
-        //   errorDiv.innerHTML = `<div class="errors"> ${error ? `${error}` :"No Errors" }</div>`;
-        // errorsContainer.appendChild(errorDiv);
-        // }
+ 
         errorDiv.innerHTML = `<div class="errors">  ${semanticAnalyzer.error ? `${semanticAnalyzer.error}` :"No Errors" }</div>`;
         errorsContainer.appendChild(errorDiv);
       
