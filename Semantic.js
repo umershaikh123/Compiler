@@ -5,6 +5,117 @@ class SemanticAnalyzer {
     this.scopeCounter = 0
   }
 
+  typeCheckInfo = {
+    // Binary operations
+
+    // parsing resultType = typecheckInfo.binary. [leftOP][operator][rightOP]
+
+    binary: {
+      // .[leftop]
+      int: {
+        //. [leftop][operator]
+        "+":
+          // . [leftop][operator][rightop] rightOP is the key and resultType is the value
+          { int: "int", float: "float" },
+        "-": { int: "int", float: "float" },
+        "*": { int: "int", float: "float" },
+        "/": { int: "float", float: "float" },
+        "%": { int: "int" },
+        "<": { int: "boolean", float: "boolean" },
+        ">": { int: "boolean", float: "boolean" },
+        "<=": { int: "boolean", float: "boolean" },
+        ">=": { int: "boolean", float: "boolean" },
+        "!=": {
+          int: "boolean",
+          float: "boolean",
+          string: "boolean",
+          boolean: "boolean",
+        },
+        "==": {
+          int: "boolean",
+          float: "boolean",
+          string: "boolean",
+          boolean: "boolean",
+        },
+      },
+      float: {
+        "+": { int: "float", float: "float" },
+        "-": { int: "float", float: "float" },
+        "*": { int: "float", float: "float" },
+        "/": { int: "float", float: "float" },
+        "%": { int: "float", float: "float" },
+        "<": { int: "boolean", float: "boolean" },
+        ">": { int: "boolean", float: "boolean" },
+        "<=": { int: "boolean", float: "boolean" },
+        ">=": { int: "boolean", float: "boolean" },
+        "!=": {
+          int: "boolean",
+          float: "boolean",
+          string: "boolean",
+          boolean: "boolean",
+        },
+        "==": {
+          int: "boolean",
+          float: "boolean",
+          string: "boolean",
+          boolean: "boolean",
+        },
+      },
+
+      string: {
+        "+": { string: "string" },
+        "<": { string: "boolean" },
+        ">": { string: "boolean" },
+        "<=": { string: "boolean" },
+        ">=": { string: "boolean" },
+        "!=": { string: "boolean" },
+        "==": { string: "boolean" },
+      },
+      boolean: {
+        "&&": { boolean: "boolean" },
+        "||": { boolean: "boolean" },
+        "==": { boolean: "boolean" },
+        "!=": { boolean: "boolean" },
+      },
+    },
+    // Unary operations
+    unary: {
+      int: {
+        "++": "int",
+        "--": "int",
+      },
+      float: {
+        "++": "float",
+        "--": "float",
+      },
+      string: {
+        "++": "string",
+      },
+      boolean: {
+        "!": "boolean",
+      },
+    },
+    // Assignment operations
+    assignment: {
+      int: {
+        "+=": "int",
+        "-=": "int",
+        "*=": "int",
+        "/=": "float",
+        "%=": "int",
+      },
+      float: {
+        "+=": "float",
+        "-=": "float",
+        "*=": "float",
+        "/=": "float",
+        "%=": "float",
+      },
+      string: { "+=": "string" },
+      boolean: {}, // No valid assignment operations for boolean
+    },
+  }
+
   createScopeTable() {
     this.scopeCounter++
   }
@@ -95,9 +206,37 @@ class SemanticAnalyzer {
     return true
   }
 
-  typeCheck(leftOperandType, rightOperandType, operator) {
-    // Implement your type checking logic here
-    // Return true if types match, false otherwise
+  typeCheck(leftOperandType, operator, rightOperandType) {
+    // Check if the operator and operand types are defined in the typeCheckInfo
+    if (
+      this.typeCheckInfo.binary &&
+      this.typeCheckInfo.binary[leftOperandType] &&
+      this.typeCheckInfo.binary[leftOperandType][operator] &&
+      this.typeCheckInfo.binary[leftOperandType][operator][rightOperandType]
+    ) {
+      return this.typeCheckInfo.binary[leftOperandType][operator][
+        rightOperandType
+      ]
+    } else {
+      console.error(
+        `Type mismatch: ${leftOperandType} ${operator} ${rightOperandType}`
+      )
+      return null // or throw an error, depending on your error handling strategy
+    }
+  }
+
+  typeCheckUnary(operandType, operator) {
+    // Check if the operator and operand type are defined in the typeCheckInfo
+    if (
+      this.typeCheckInfo.unary &&
+      this.typeCheckInfo.unary[operandType] &&
+      this.typeCheckInfo.unary[operandType][operator]
+    ) {
+      return this.typeCheckInfo.unary[operandType][operator]
+    } else {
+      console.error(`Type mismatch: ${operator}${operandType}`)
+      return null // or throw an error, depending on your error handling strategy
+    }
   }
 }
 
@@ -205,4 +344,30 @@ for (const entry of semanticAnalyzer.currentScopeTable) {
     Scope: entry.Scope,
   })
 }
+
+// Example 1: Binary operation - Addition
+const resultTypeAddition = semanticAnalyzer.typeCheck("int", "+", "int")
+console.log("Result type for int + int:", resultTypeAddition) // Output: int
+
+const resultTypeAddition2 = semanticAnalyzer.typeCheck("int", "+", "float")
+console.log("Result type for int + float:", resultTypeAddition2) // Output: int
+
+// Example 2: Binary operation - Subtraction
+const resultTypeSubtraction = semanticAnalyzer.typeCheck("float", "-", "int")
+console.log("Result type for float - int:", resultTypeSubtraction) // Output: float
+
+// Example 3: Binary operation - Division (Type mismatch)
+const resultTypeDivision = semanticAnalyzer.typeCheck("int", "/", "string")
+console.log("Result type for int / string:", resultTypeDivision) // Output: Type mismatch: int / string
+
+// Example 4: Unary operation - Increment
+const resultTypeIncrement = semanticAnalyzer.typeCheckUnary("int", "++")
+console.log("Result type for ++int:", resultTypeIncrement) // Output: int
+
+// Example 5: Unary operation - Increment (Type mismatch)
+const resultTypeInvalidIncrement = semanticAnalyzer.typeCheckUnary(
+  "string",
+  "++"
+)
+console.log("Result type for ++string:", resultTypeInvalidIncrement) // Output: Type mismatch: ++string
 console.log("End of Semantic Analysis.")

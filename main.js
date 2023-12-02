@@ -8,12 +8,17 @@ class Lexer {
       DT: ["void", "int", "bool", "double", "char", "string"],
 
       WDT: ["Integer", "Boolean", "Character", "String", "Double"],
+      implements: ["implements"],
       "=": ["="],
       RO: ["<", ">", "<=", ">=", "!=", "=="],
       MDM: ["*", "/", "%"],
       PM: ["+", "-"],
-      implements: ["implements"],
       AO: ["+=", "-=", "*=", "/=", "%="],
+      inc_dec_Op: ["++", "--"],
+
+      "!": ["!"],
+      "||": ["||"],
+      "&&": ["&&"],
 
       put: ["put"],
 
@@ -53,11 +58,6 @@ class Lexer {
       Integer: ["Integer"],
 
       $: ["$"],
-      inc_dec_Op: ["++", "--"],
-
-      "!": ["!"],
-      "||": ["||"],
-      "&&": ["&&"],
 
       add: ["add"],
       get: ["get"],
