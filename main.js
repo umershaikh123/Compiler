@@ -401,6 +401,279 @@ lexer.tokenize()
 
 lexer.writeTokensToFile()
 
+class SemanticAnalyzer {
+  constructor() {
+    this.mainTable = []
+    this.currentScopeTable = []
+    this.scopeCounter = 0
+    this.error = []
+  }
+
+  typeCheckInfo = {
+    // parsing resultType = typecheckInfo.binary. [leftOP][operator][rightOP]
+
+    //.binary
+    binary: {
+      // .[leftop]
+      int: {
+        //. [leftop][operator]
+        "+":
+          // . [leftop][operator][rightop] rightOP is the key and resultType is the value
+          { int: "int", float: "float" },
+        "-": { int: "int", float: "float" },
+        "*": { int: "int", float: "float" },
+        "/": { int: "float", float: "float" },
+        "%": { int: "int" },
+        "<": { int: "boolean", float: "boolean" },
+        ">": { int: "boolean", float: "boolean" },
+        "<=": { int: "boolean", float: "boolean" },
+        ">=": { int: "boolean", float: "boolean" },
+        "!=": {
+          int: "boolean",
+          float: "boolean",
+          string: "boolean",
+          boolean: "boolean",
+        },
+        "==": {
+          int: "boolean",
+          float: "boolean",
+          string: "boolean",
+          boolean: "boolean",
+        },
+      },
+      float: {
+        "+": { int: "float", float: "float" },
+        "-": { int: "float", float: "float" },
+        "*": { int: "float", float: "float" },
+        "/": { int: "float", float: "float" },
+        "%": { int: "float", float: "float" },
+        "<": { int: "boolean", float: "boolean" },
+        ">": { int: "boolean", float: "boolean" },
+        "<=": { int: "boolean", float: "boolean" },
+        ">=": { int: "boolean", float: "boolean" },
+        "!=": {
+          int: "boolean",
+          float: "boolean",
+          string: "boolean",
+          boolean: "boolean",
+        },
+        "==": {
+          int: "boolean",
+          float: "boolean",
+          string: "boolean",
+          boolean: "boolean",
+        },
+      },
+
+      string: {
+        "+": { string: "string" },
+        "<": { string: "boolean" },
+        ">": { string: "boolean" },
+        "<=": { string: "boolean" },
+        ">=": { string: "boolean" },
+        "!=": { string: "boolean" },
+        "==": { string: "boolean" },
+      },
+      boolean: {
+        "&&": { boolean: "boolean" },
+        "||": { boolean: "boolean" },
+        "==": { boolean: "boolean" },
+        "!=": { boolean: "boolean" },
+      },
+    },
+
+    unary: {
+      int: {
+        "++": "int",
+        "--": "int",
+      },
+      float: {
+        "++": "float",
+        "--": "float",
+      },
+      string: {
+        "++": "string",
+      },
+      boolean: {
+        "!": "boolean",
+      },
+    },
+
+    assignment: {
+      int: {
+        "+=": "int",
+        "-=": "int",
+        "*=": "int",
+        "/=": "float",
+        "%=": "int",
+      },
+      float: {
+        "+=": "float",
+        "-=": "float",
+        "*=": "float",
+        "/=": "float",
+        "%=": "float",
+      },
+      string: { "+=": "string" },
+      boolean: {},
+      object: { "=": "object" },
+      array: { "=": "array" },
+    },
+    array: {
+      int: "int_array",
+      float: "float_array",
+      string: "string_array",
+      boolean: "boolean_array",
+      object: "object_array",
+    },
+  }
+
+  createScopeTable() {
+    this.scopeCounter++
+  }
+
+  insertDataIntoMainTable(name, type, accessModifier, typeModifier, parent) {
+    const exists = this.lookupInMainTable(name)
+    if (exists) {
+      const ErrorMessage = `Re-declare error: ${name} already declared.`
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+      return false
+    }
+
+    this.mainTable.push({
+      Name: name,
+      Type: type,
+      AccessModifier: accessModifier,
+      TypeModifier: typeModifier,
+      Parent: parent,
+      MemberTable: [],
+    })
+
+    return true
+  }
+
+  insertDataIntoMemberTable(
+    className,
+    name,
+    type,
+    accessModifier,
+    typeModifier
+  ) {
+    const classEntry = this.lookupInMainTable(className)
+    if (!classEntry) {
+      const ErrorMessage = `undeclare Error Class ${className} not found.`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+      return false
+    }
+
+    const memberTable = classEntry.MemberTable
+    const exists = this.lookupInMemberTable(className, name)
+    if (exists) {
+      const ErrorMessage = `Re-declare error: ${name} already declared in class ${className}.`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
+      return false
+    }
+
+    memberTable.push({
+      Name: name,
+      Type: type,
+      AccessModifier: accessModifier,
+      TypeModifier: typeModifier,
+    })
+
+    return true
+  }
+
+  lookupInMainTable(name) {
+    return this.mainTable.find(entry => entry.Name === name)
+  }
+
+  lookupInMemberTable(className, name) {
+    const classEntry = this.lookupInMainTable(className)
+    if (!classEntry) {
+      const ErrorMessage = `undeclare Error Class ${className} not found.`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
+      return false
+    }
+
+    const memberTable = classEntry.MemberTable
+    return memberTable.find(entry => entry.Name === name)
+  }
+
+  lookupInScopeTable(name) {
+    return this.currentScopeTable.find(entry => entry.Name === name)
+  }
+
+  insertDataIntoScopeTable(name, type) {
+    const exists = this.lookupInScopeTable(name)
+    if (exists) {
+      const ErrorMessage = `Re-declare Error: ${name} already declared in this scope.`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
+      return false
+    }
+
+    this.currentScopeTable.push({
+      Name: name,
+      Type: type,
+      Scope: this.scopeCounter,
+    })
+
+    return true
+  }
+
+  typeCheck(leftOperandType, operator, rightOperandType) {
+    // Check if the operator and operand types are defined in the typeCheckInfo
+    if (
+      this.typeCheckInfo.binary &&
+      this.typeCheckInfo.binary[leftOperandType] &&
+      this.typeCheckInfo.binary[leftOperandType][operator] &&
+      this.typeCheckInfo.binary[leftOperandType][operator][rightOperandType]
+    ) {
+      return this.typeCheckInfo.binary[leftOperandType][operator][
+        rightOperandType
+      ]
+    } else {
+      const ErrorMessage = `Error : Type mismatch: ${leftOperandType} ${operator} ${rightOperandType}`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
+      return null // or throw an error, depending on your error handling strategy
+    }
+  }
+
+  typeCheckUnary(operandType, operator) {
+    // Check if the operator and operand type are defined in the typeCheckInfo
+    if (
+      this.typeCheckInfo.unary &&
+      this.typeCheckInfo.unary[operandType] &&
+      this.typeCheckInfo.unary[operandType][operator]
+    ) {
+      return this.typeCheckInfo.unary[operandType][operator]
+    } else {
+      const ErrorMessage = `Error : Type mismatch: ${operator}${operandType}`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
+      return null // or throw an error, depending on your error handling strategy
+    }
+  }
+}
+
+const semanticAnalyzer = new SemanticAnalyzer()
 const Grammar = {
   "<Start>": [
     ["<ClassDecl>", "<Start>"],
@@ -418,7 +691,7 @@ const Grammar = {
       "<Extra>",
       //  insert into MainTable
       "{",
-
+      //scope
       "<ClassBody>",
       // insert into member table
       "}",
@@ -780,24 +1053,57 @@ function parseNonTerminal(nonTerminal) {
   const productionRule = Grammar[nonTerminal]
 
   if (Array.isArray(productionRule)) {
+    let parameterValues = {}
     for (const rule of productionRule) {
       console.log(`Checking production rule: ${rule}`)
       let ruleIndex = 0
       let failed = false
+
       for (const symbol of rule) {
-        if (symbol.startsWith("<")) {
+        if (typeof symbol === "string" && symbol.startsWith("<")) {
           // It's a non-terminal
           console.log(`Processing non-terminal: ${symbol}  \n`)
+          const valuePart = parseNonTerminalValue(symbol)
+          console.log("valuePart", valuePart)
+          if (valuePart !== null) {
+            // Store value part for the non-terminal
+            // parameterValues[symbol] = valuePart
+            if (parameterValues[symbol]) {
+              parameterValues[symbol].push(valuePart)
+            } else {
+              parameterValues[symbol] = [valuePart]
+            }
+            // parameterValues[symbol] = parameterValues[symbol] || []
+            // parameterValues[symbol].push(valuePart)
+          }
           if (!parseNonTerminal(symbol)) {
             failed = true
+            // const valuePart = parseNonTerminalValue(symbol)
+            // console.log("valuePart", valuePart)
+            // if (valuePart !== null) {
+            //   // Store value part for the non-terminal
+            //   parameterValues[symbol] = valuePart
+            // }
             break
           }
+
+          // Example: Call a semantic function based on non-terminal
         } else if (symbol !== "null") {
           // It's a terminal
           const currentToken = tokens[tokenIndex]
           console.log("currentToken", currentToken)
-          //   console.log("currentToken.classpart", currentToken.classpart)
           if (currentToken && currentToken.classpart === symbol) {
+            //   console.log("currentToken.classpart", currentToken.classpart)
+            const terminalValue = currentToken.valuepart
+            // parameterValues[symbol] = terminalValue
+            // parameterValues[symbol] = parameterValues[symbol] || []
+            // parameterValues[symbol].push(terminalValue)
+
+            if (parameterValues[symbol]) {
+              parameterValues[symbol].push(terminalValue)
+            } else {
+              parameterValues[symbol] = [terminalValue]
+            }
             console.log(`Matched ${symbol}  \n`)
             tokenIndex++
           } else {
@@ -808,6 +1114,8 @@ function parseNonTerminal(nonTerminal) {
             break
           }
         }
+        // callSemanticFunction(symbol, parameterValues)
+        console.log("parameterValues", parameterValues)
         ruleIndex++
       }
       if (!failed) {
@@ -817,6 +1125,63 @@ function parseNonTerminal(nonTerminal) {
   }
 
   return false // All production rules failed
+}
+
+function parseNonTerminalValue(nonTerminal) {
+  // Example: Parse the value part for a non-terminal
+  const currentToken = tokens[tokenIndex]
+  console.log("nonTerminal", nonTerminal)
+
+  if (currentToken) {
+    // Adjust this based on your token structure
+
+    return currentToken.valuepart
+  }
+  return null
+}
+
+// Name: name,
+// Type: type,
+// AccessModifier: accessModifier,
+// TypeModifier: typeModifier,
+// Parent: parent,
+// Inherit : interface or class
+// Interfaces : ?
+function callSemanticFunction(nonTerminal, parameterValues) {
+  // Example: Call semantic function based on non-terminal and parameter values
+  if (nonTerminal === "<ClassDecl>") {
+    nonTerminal = "<ClassAccMod>"
+    if (nonTerminal === "<ClassAccMod>") {
+      const accessModifier = parameterValues[nonTerminal]
+
+      nonTerminal = "<ClassNonAccMod>"
+      if (nonTerminal === "<ClassNonAccMod>") {
+        const typeModifier = parameterValues[nonTerminal]
+        const type = "class"
+        const Name = parameterValues["ID"] // get token value part of ID
+
+        nonTerminal = "<Extra>"
+        if (nonTerminal === "<Extra>") {
+          const parent = ID
+          const Inherit = ID
+          const Interfaces = ID
+
+          semanticAnalyzer.insertDataIntoMainTable(
+            Name,
+            type,
+            accessModifier,
+            typeModifier,
+            parent,
+            Inherit,
+            Interfaces
+          )
+          return true
+        }
+      }
+    }
+  }
+
+  return false
 }
 
 function parse() {

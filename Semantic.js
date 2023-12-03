@@ -206,12 +206,13 @@ class SemanticAnalyzer {
     return memberTable.find(entry => entry.Name === name)
   }
 
-  lookupInScopeTable(name) {
-    return this.currentScopeTable.find(entry => entry.Name === name)
+  lookupInScopeTable(name, scope) {
+    return this.currentScopeTable.some(
+      entry => entry.Name === name && entry.Scope === scope
+    )
   }
-
   insertDataIntoScopeTable(name, type) {
-    const exists = this.lookupInScopeTable(name)
+    const exists = this.lookupInScopeTable(name, this.scopeCounter)
     if (exists) {
       const ErrorMessage = `Re-declare Error: ${name} already declared in this scope.`
 
@@ -355,6 +356,7 @@ semanticAnalyzer.insertDataIntoMemberTable(
 semanticAnalyzer.createScopeTable()
 semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
 semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
 semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
 semanticAnalyzer.createScopeTable()
 semanticAnalyzer.insertDataIntoScopeTable("floatVar", "float")
@@ -372,6 +374,36 @@ semanticAnalyzer.createScopeTable()
 semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
 
 semanticAnalyzer.lookupInMemberTable("Animal", "c")
+const r1 = semanticAnalyzer.lookupInMainTable(
+  "Animal",
+  "Class",
+  "public",
+  null,
+  null
+)
+const r2 = semanticAnalyzer.lookupInScopeTable("Animal", 3)
+
+if (!r1) {
+  const ErrorMessage = `undeclare Error , entry in MainTable not found.`
+
+  console.error(ErrorMessage)
+  semanticAnalyzer.error.push(ErrorMessage)
+}
+
+if (!r2) {
+  const ErrorMessage = `undeclare Error , entry in ScopeTable not found.`
+
+  console.error(ErrorMessage)
+  semanticAnalyzer.error.push(ErrorMessage)
+}
+
+semanticAnalyzer.insertDataIntoMemberTable(
+  "fakeClass",
+  "myMethod",
+  "int",
+  "private",
+  null
+)
 // Log the results
 console.log("Main Table:")
 

@@ -1,14 +1,5 @@
-public abstract class Person implements cow , cat {
-    public string name;
-    public int age;
+public abstract class Person extends employee {
  
-
-public Static main () {
-    Person p = new Person("John", 25);
-    p.greet(a,b);
-
-
-}
 
 
 }
