@@ -100,23 +100,20 @@ class SemanticAnalyzer {
 
     assignment: {
       int: {
-        "+=": "int",
-        "-=": "int",
-        "*=": "int",
-        "/=": "float",
-        "%=": "int",
+        "+=": { int: "int" },
+        "-=": { int: "int" },
+        "*=": { int: "int" },
+        "/=": { float: "float" },
+        "%=": { int: "int" },
       },
       float: {
-        "+=": "float",
-        "-=": "float",
-        "*=": "float",
-        "/=": "float",
-        "%=": "float",
+        "+=": { float: "float" },
+        "-=": { float: "float" },
+        "*=": { float: "float" },
+        "/=": { float: "float" },
+        "%=": { float: "float" },
       },
-      string: { "+=": "string" },
-
-      object: { "=": "object" },
-      array: { "=": "array" },
+      string: { "+=": { string: "string" } },
     },
 
     array: {
@@ -203,6 +200,7 @@ class SemanticAnalyzer {
 
   insertDataIntoScopeTable(name, type) {
     const exists = this.lookupInScopeTable(name)
+    console.log("exists", exists)
     if (exists) {
       const ErrorMessage = `Re-declare Error: ${name} already declared in scope ${this.scopeCounter}.`
 
@@ -244,23 +242,40 @@ class SemanticAnalyzer {
     let currentScopeIndex = this.ScopeStack.indexOf(
       this.ScopeStack[this.ScopeStack.length - 1]
     )
-    // console.log("Last value", currentScopeIndex)
-
-    while (currentScopeIndex >= 0) {
+    console.log("Last value", currentScopeIndex)
+    if (
+      this.currentScopeTable.some(
+        entry => entry.Name === name && entry.Scope === this.scopeCounter
+      ) === false
+    ) {
       const currentScope = this.ScopeStack[currentScopeIndex]
-      // console.log("parent scope lookup", currentScope)
-      const isInCurrentScope = this.currentScopeTable.some(
+      return this.currentScopeTable.some(
         entry => entry.Name === name && entry.Scope === currentScope
       )
-
-      if (isInCurrentScope) {
-        // console.log("scope  Found")
-        return this.currentScopeTable.some(
+    } else {
+      while (currentScopeIndex >= 0) {
+        const currentScope = this.ScopeStack[currentScopeIndex]
+        // console.log("parent scope lookup", currentScope)
+        const isInCurrentScope = this.currentScopeTable.some(
           entry => entry.Name === name && entry.Scope === currentScope
         )
-      }
 
-      currentScopeIndex--
+        if (isInCurrentScope) {
+          console.log("scope  Found")
+
+          console.log(
+            "value Found",
+            this.currentScopeTable.some(
+              entry => entry.Name === name && entry.Scope === currentScope
+            )
+          )
+          return this.currentScopeTable.some(
+            entry => entry.Name === name && entry.Scope === currentScope
+          )
+        }
+
+        currentScopeIndex--
+      }
     }
 
     return null
@@ -342,15 +357,18 @@ class SemanticAnalyzer {
     }
   }
 
-  typeCheckAssignment(operator, operandType) {
+  typeCheckAssignment(leftOperandType, operator, rightOperandType) {
     if (
       this.typeCheckInfo.assignment &&
-      this.typeCheckInfo.assignment[operandType] &&
-      this.typeCheckInfo.assignment[operandType][operator]
+      this.typeCheckInfo.assignment[leftOperandType] &&
+      this.typeCheckInfo.assignment[leftOperandType][operator] &&
+      this.typeCheckInfo.assignment[leftOperandType][operator][rightOperandType]
     ) {
-      return this.typeCheckInfo.assignment[operandType][operator]
+      return this.typeCheckInfo.assignment[leftOperandType][operator][
+        rightOperandType
+      ]
     } else {
-      const ErrorMessage = `Error : Type mismatch: ${operator}${operandType}`
+      const ErrorMessage = `Error : Type mismatch: ${leftOperandType} ${operator} ${rightOperandType}`
 
       console.error(ErrorMessage)
       this.error.push(ErrorMessage)
@@ -483,7 +501,6 @@ semanticAnalyzer.insertDataIntoMemberTable(
 semanticAnalyzer.createScope()
 semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
 semanticAnalyzer.createScope()
-semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
 
 semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
 semanticAnalyzer.createScope()
@@ -505,15 +522,88 @@ semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
 semanticAnalyzer.DestroyScope()
 semanticAnalyzer.DestroyScope()
 semanticAnalyzer.DestroyScope()
-// semanticAnalyzer.DestroyScope()
-// semanticAnalyzer.CalllookupInScopeTable("a")
 
-const r = semanticAnalyzer.CalllookupInMemberTable("MyClass", "myFunction")
+// Define an interface
+semanticAnalyzer.insertDataIntoMainTable(
+  "Shape",
+  "interface",
+  "public",
+  null,
+  null
+)
+
+semanticAnalyzer.insertDataIntoMemberTable(
+  "Shape",
+  "calculateArea",
+  ["void , double"],
+  "public",
+  "abstract"
+)
+semanticAnalyzer.insertDataIntoMemberTable(
+  "Shape",
+  "getColor",
+  ["void", "string"],
+  "public",
+  "abstract"
+)
+
+semanticAnalyzer.insertDataIntoMainTable("Circle", "class", "public", null, [
+  "Shape",
+])
+semanticAnalyzer.insertDataIntoMemberTable(
+  "Circle",
+  "calculateArea",
+  ["void", "double"],
+  "public",
+  null
+)
+semanticAnalyzer.insertDataIntoMemberTable(
+  "Circle",
+  "getColor",
+  ["void", "string"],
+  "public",
+  null
+)
+
+semanticAnalyzer.insertDataIntoMainTable(
+  "Vehicle",
+  "abstract class",
+  "public",
+  null,
+  null
+)
+
+semanticAnalyzer.insertDataIntoMemberTable(
+  "Vehicle",
+  "startEngine",
+  ["void", "void"],
+  "public",
+  "abstract"
+)
+semanticAnalyzer.insertDataIntoMemberTable(
+  "Vehicle",
+  "stopEngine",
+  ["void", "void"],
+  "public",
+  null
+)
+
+semanticAnalyzer.insertDataIntoMainTable("Car", "class", "public", null, [
+  "Vehicle",
+])
+semanticAnalyzer.insertDataIntoMemberTable(
+  "Car",
+  "startEngine",
+  ["void", "void"],
+  "public",
+  null
+)
+const r = semanticAnalyzer.CalllookupInMemberTable("MyClass", "myAttribute")
 
 console.log("  r ", r)
 console.log(" scope stack", semanticAnalyzer.ScopeStack)
 
 console.log("End of Semantic Analysis.")
 
-// const functionTypes = extractFunctionTypes(r)
-// console.log(functionTypes)
+const functionTypes = extractFunctionTypes(r)
+console.log(functionTypes)
