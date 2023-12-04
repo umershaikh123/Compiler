@@ -103,7 +103,7 @@
           <td>${entry.Type}</td>
           <td>${entry.AccessModifier}</td>
           <td>${entry.TypeModifier}</td>
-          <td>${entry.Parent}</td>
+          <td>${entry.Parent ?? "null"}</td>
         `;
         mainTableBody.appendChild(row);
       }

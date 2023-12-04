@@ -148,7 +148,7 @@ class SemanticAnalyzer {
       Type: type,
       AccessModifier: accessModifier,
       TypeModifier: typeModifier,
-      Parent: parent,
+      Parent: parent || [],
       MemberTable: [],
     })
 
@@ -393,6 +393,78 @@ public class MainClass {
 const semanticAnalyzer = new SemanticAnalyzer()
 
 // Start semantic analysis
+semanticAnalyzer.createScopeTable()
 
-console.log("Result type for ++string:", resultTypeInvalidIncrement) // Output: Type mismatch: ++string
+semanticAnalyzer.insertDataIntoMainTable("MyClass", "Class", "public", null, [
+  "parent1",
+  "parent2",
+])
+
+semanticAnalyzer.insertDataIntoMainTable(
+  "MyClass2",
+  "Class",
+  "public",
+  null,
+  "parent1"
+)
+
+semanticAnalyzer.insertDataIntoMemberTable(
+  "MyClass",
+  "myAttribute",
+  "int",
+  "private",
+  null
+)
+
+semanticAnalyzer.insertDataIntoMemberTable(
+  "MyClass",
+  "myMethod",
+  "int",
+  "private",
+  null
+)
+
+// Analyze MainClass
+semanticAnalyzer.insertDataIntoMainTable(
+  "MainClass",
+  "Class",
+  "public",
+  null,
+  null
+)
+semanticAnalyzer.insertDataIntoMemberTable(
+  "MainClass",
+  "myAttribute",
+  "int",
+  "private",
+  null
+)
+
+semanticAnalyzer.insertDataIntoMemberTable(
+  "MainClass",
+  "myMethod",
+  "int",
+  "private",
+  null
+)
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
+
+semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("floatVar", "float")
+
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("a", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("b", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("c", "float")
+
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("mainVar", "int")
+semanticAnalyzer.createScopeTable()
+semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
 console.log("End of Semantic Analysis.")
