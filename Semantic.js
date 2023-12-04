@@ -163,7 +163,7 @@ class SemanticAnalyzer {
   insertDataIntoMemberTable(
     className,
     name,
-    type,
+    types,
     accessModifier,
     typeModifier
   ) {
@@ -187,9 +187,13 @@ class SemanticAnalyzer {
       return false
     }
 
+    const formattedType = Array.isArray(types)
+      ? types.slice(0, -1).join(", ") + " -> " + types.slice(-1)
+      : types
+
     memberTable.push({
       Name: name,
-      Type: type,
+      Type: formattedType,
       AccessModifier: accessModifier,
       TypeModifier: typeModifier,
     })
@@ -401,7 +405,23 @@ semanticAnalyzer.insertDataIntoMainTable(
 
 semanticAnalyzer.insertDataIntoMemberTable(
   "MyClass",
+  "myFunction",
+  ["int", "double", "double", "double"],
+  "public",
+  null
+)
+
+semanticAnalyzer.insertDataIntoMemberTable(
+  "MyClass",
   "myAttribute",
+  "int",
+  "private",
+  null
+)
+
+semanticAnalyzer.insertDataIntoMemberTable(
+  "MyClass",
+  "myAttribute3",
   "int",
   "private",
   null
