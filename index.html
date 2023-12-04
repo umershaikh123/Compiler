@@ -97,20 +97,33 @@
     <div id="errorsContainer"></div>
     <script src="/Compiler/Semantic.js"></script>
   <script  >
-   
-   function renderErrors() {
-      const errorsContainer = document.getElementById('errorsContainer');
-      errorsContainer.innerHTML = '';
+ 
+  function renderErrors() {
+  const errorsContainer = document.getElementById('errorsContainer');
+  errorsContainer.innerHTML = '';
 
  
-        const errorDiv = document.createElement('div');
+  if (semanticAnalyzer.error.length > 0) {
+    
+    const errorDiv = document.createElement('div');
+
+  
+    semanticAnalyzer.error.forEach(error => {
+      const errorParagraph = document.createElement('p');
+      errorParagraph.classList.add('errors');
+      errorParagraph.textContent = error;
+      errorDiv.appendChild(errorParagraph);
+    });
 
  
-        errorDiv.innerHTML = `<p class="errors">  ${semanticAnalyzer.error ? `${semanticAnalyzer.error}` :"No Errors" }</p>`;
-        errorsContainer.appendChild(errorDiv);
-      
-    }
-
+    errorsContainer.appendChild(errorDiv);
+  } else {
+     
+    const noErrorsParagraph = document.createElement('p');
+    noErrorsParagraph.textContent = 'No Errors';
+    errorsContainer.appendChild(noErrorsParagraph);
+  }
+}
     function renderMainTable() {
       const mainTableBody = document.getElementById('mainTableBody');
       mainTableBody.innerHTML = '';

@@ -500,6 +500,7 @@ semanticAnalyzer.insertDataIntoMemberTable(
 )
 semanticAnalyzer.createScope()
 semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
+
 semanticAnalyzer.createScope()
 
 semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
