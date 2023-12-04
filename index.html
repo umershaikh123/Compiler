@@ -62,6 +62,8 @@
     <h2>Member Tables</h2>
     <div id="memberTablesContainer"></div>
   
+
+    <div class="scope"> 
     <h2>Scope Table</h2>
     <table>
       <thead>
@@ -72,7 +74,24 @@
         </tr>
       </thead>
       <tbody id="scopeTableBody"></tbody>
+
+      
+    </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Scope Stack</th>
+        
+          </tr>
+        </thead>
+  
+    
+      <tbody id="scopeStackTableBody"></tbody>
     </table>
+
+    <div id="currentScope"></div>
+  
   
     <h2>Errors</h2>
     <div id="errorsContainer"></div>
@@ -165,12 +184,36 @@
       }
     }
 
+    function renderScopeStackTable() {
+    const scopeStackTableBody = document.getElementById('scopeStackTableBody');
+    scopeStackTableBody.innerHTML = '';
 
+    for (let i = semanticAnalyzer.ScopeStack.length - 1; i >= 0; i--) {
+        const scope = semanticAnalyzer.ScopeStack[i];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          
+            <td>${scope}</td>
+        `;
+        scopeStackTableBody.appendChild(row);
+    }
+}
+
+
+function renderCurrentScope() {
+    const currentScopeDiv = document.getElementById('currentScope');
+    currentScopeDiv.innerHTML = `<h4>Scope Counter : ${semanticAnalyzer.scopeCounter} </h4>`;
+ 
+     
+   
+}
   
     renderMainTable();
     renderMemberTables();
     renderScopeTable();
     renderErrors();
+    renderScopeStackTable()
+    renderCurrentScope()
   </script>
 
 

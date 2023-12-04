@@ -2,6 +2,7 @@ class SemanticAnalyzer {
   constructor() {
     this.mainTable = []
     this.currentScopeTable = []
+    this.ScopeStack = []
     this.scopeCounter = 0
     this.error = []
   }
@@ -130,8 +131,12 @@ class SemanticAnalyzer {
     object: { ID: "object" },
   }
 
-  createScopeTable() {
+  createScope() {
     this.scopeCounter++
+    this.ScopeStack.push(this.scopeCounter)
+  }
+  DestroyScope() {
+    this.ScopeStack.pop(this.scopeCounter)
   }
 
   insertDataIntoMainTable(name, type, accessModifier, typeModifier, parent) {
@@ -193,7 +198,7 @@ class SemanticAnalyzer {
   }
 
   insertDataIntoScopeTable(name, type) {
-    const exists = this.lookupInScopeTable(name, this.scopeCounter)
+    const exists = this.lookupInScopeTable(name)
     if (exists) {
       const ErrorMessage = `Re-declare Error: ${name} already declared in scope ${this.scopeCounter}.`
 
@@ -231,10 +236,30 @@ class SemanticAnalyzer {
     return memberTable.find(entry => entry.Name === name)
   }
 
-  lookupInScopeTable(name, scope) {
-    return this.currentScopeTable.some(
-      entry => entry.Name === name && entry.Scope === scope
+  lookupInScopeTable(name) {
+    let currentScopeIndex = this.ScopeStack.indexOf(
+      this.ScopeStack[this.ScopeStack.length - 1]
     )
+    console.log("Last value", currentScopeIndex)
+
+    while (currentScopeIndex >= 0) {
+      const currentScope = this.ScopeStack[currentScopeIndex]
+      console.log("parent scope lookup", currentScope)
+      const isInCurrentScope = this.currentScopeTable.some(
+        entry => entry.Name === name && entry.Scope === currentScope
+      )
+
+      if (isInCurrentScope) {
+        console.log("scope  Found")
+        return this.currentScopeTable.some(
+          entry => entry.Name === name && entry.Scope === currentScope
+        )
+      }
+
+      currentScopeIndex--
+    }
+
+    return null
   }
 
   CalllookupInMainTable(name) {
@@ -261,12 +286,14 @@ class SemanticAnalyzer {
     }
   }
 
-  CalllookupInScopeTable(name, scope) {
-    const result = this.lookupInScopeTable(name, scope)
+  CalllookupInScopeTable(name) {
+    const result = this.lookupInScopeTable(name)
     if (result) {
       return result
     } else {
-      const ErrorMessage = `Undeclared Error: ${name} with  ${scope} does not exists in ScopeTable`
+      const ErrorMessage = `Undeclared Error: ${name} does not exists in ScopeTable with current scope ${
+        this.ScopeStack[this.ScopeStack.length - 1]
+      } or parent scope`
 
       console.error(ErrorMessage)
       this.error.push(ErrorMessage)
@@ -295,7 +322,6 @@ class SemanticAnalyzer {
   }
 
   typeCheckUnary(operandType, operator) {
-    // Check if the operator and operand type are defined in the typeCheckInfo
     if (
       this.typeCheckInfo.unary &&
       this.typeCheckInfo.unary[operandType] &&
@@ -313,7 +339,6 @@ class SemanticAnalyzer {
   }
 
   typeCheckAssignment(operator, operandType) {
-    // Check if the operator and operand type are defined in the typeCheckInfo
     if (
       this.typeCheckInfo.assignment &&
       this.typeCheckInfo.assignment[operandType] &&
@@ -331,7 +356,6 @@ class SemanticAnalyzer {
   }
 
   typeCheckArray(operator) {
-    // Check if the operator and operand type are defined in the typeCheckInfo
     if (this.typeCheckInfo.array && this.typeCheckInfo.array[operator]) {
       return this.typeCheckInfo.array[operator]
     } else {
@@ -345,7 +369,6 @@ class SemanticAnalyzer {
   }
 
   typeCheckObject(operator) {
-    // Check if the operator and operand type are defined in the typeCheckInfo
     if (this.typeCheckInfo.object && this.typeCheckInfo.object[operator]) {
       return this.typeCheckInfo.object[operator]
     } else {
@@ -359,41 +382,9 @@ class SemanticAnalyzer {
   }
 }
 
-// Assume we have the following Java-like code
-const javaCode = `
-class MyClass {
-  private int myAttribute;
-
-  public void myMethod() {
-    int localVar = 42;
-    {
-      int innerVar = 10;
-    }
-  }
-
-  public void anotherMethod() {
-    float floatVar = 3.14;
-  }
-}
-
-public class MainClass {
-  public static void main(String[] args) {
-    int mainVar = 100;
-    {
-      int innerMainVar = 50;
-    }
-
-    MyClass myObject = new MyClass();
-    myObject.myMethod();
-    myObject.anotherMethod();
-  }
-}
-`
-
 const semanticAnalyzer = new SemanticAnalyzer()
 
-// Start semantic analysis
-semanticAnalyzer.createScopeTable()
+semanticAnalyzer.createScope()
 
 semanticAnalyzer.insertDataIntoMainTable("MyClass", "Class", "public", null, [
   "parent1",
@@ -424,7 +415,6 @@ semanticAnalyzer.insertDataIntoMemberTable(
   null
 )
 
-// Analyze MainClass
 semanticAnalyzer.insertDataIntoMainTable(
   "MainClass",
   "Class",
@@ -447,24 +437,35 @@ semanticAnalyzer.insertDataIntoMemberTable(
   "private",
   null
 )
-semanticAnalyzer.createScopeTable()
+semanticAnalyzer.createScope()
 semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
-semanticAnalyzer.createScopeTable()
+semanticAnalyzer.createScope()
 semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
 
 semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
-semanticAnalyzer.createScopeTable()
+semanticAnalyzer.createScope()
 semanticAnalyzer.insertDataIntoScopeTable("floatVar", "float")
 
-semanticAnalyzer.createScopeTable()
+semanticAnalyzer.createScope()
 semanticAnalyzer.insertDataIntoScopeTable("a", "int")
-semanticAnalyzer.createScopeTable()
+semanticAnalyzer.createScope()
 semanticAnalyzer.insertDataIntoScopeTable("b", "int")
-semanticAnalyzer.createScopeTable()
+semanticAnalyzer.createScope()
 semanticAnalyzer.insertDataIntoScopeTable("c", "float")
 
-semanticAnalyzer.createScopeTable()
+semanticAnalyzer.createScope()
 semanticAnalyzer.insertDataIntoScopeTable("mainVar", "int")
-semanticAnalyzer.createScopeTable()
+semanticAnalyzer.createScope()
+semanticAnalyzer.DestroyScope()
+
 semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
+semanticAnalyzer.DestroyScope()
+semanticAnalyzer.DestroyScope()
+semanticAnalyzer.DestroyScope()
+semanticAnalyzer.DestroyScope()
+semanticAnalyzer.CalllookupInScopeTable("a")
+
+console.log(" current scope ", semanticAnalyzer.scopeCounter)
+console.log(" scope stack", semanticAnalyzer.ScopeStack)
+
 console.log("End of Semantic Analysis.")
