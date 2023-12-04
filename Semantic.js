@@ -16,7 +16,7 @@ class SemanticAnalyzer {
         //. [leftop][operator]
         "+":
           // . [leftop][operator][rightop] rightOP is the key and resultType is the value
-          { int: "int", float: "float" },
+          { int: "int", float: "float", string: "string" },
         "-": { int: "int", float: "float" },
         "*": { int: "int", float: "float" },
         "/": { int: "float", float: "float" },
@@ -63,7 +63,8 @@ class SemanticAnalyzer {
       },
 
       string: {
-        "+": { string: "string" },
+        "+": { string: "string", int: "string" },
+
         "<": { string: "boolean" },
         ">": { string: "boolean" },
         "<=": { string: "boolean" },
@@ -112,17 +113,21 @@ class SemanticAnalyzer {
         "%=": "float",
       },
       string: { "+=": "string" },
-      boolean: {},
+
       object: { "=": "object" },
       array: { "=": "array" },
     },
+
     array: {
-      int: "int_array",
-      float: "float_array",
-      string: "string_array",
-      boolean: "boolean_array",
+      Integer: "int_array",
+      Float: "float_array",
+      Character: "char_array",
+      String: "string_array",
+      Boolean: "boolean_array",
       object: "object_array",
     },
+
+    object: { ID: "object" },
   }
 
   createScopeTable() {
@@ -190,7 +195,7 @@ class SemanticAnalyzer {
   insertDataIntoScopeTable(name, type) {
     const exists = this.lookupInScopeTable(name, this.scopeCounter)
     if (exists) {
-      const ErrorMessage = `Re-declare Error: ${name} already declared in this scope.`
+      const ErrorMessage = `Re-declare Error: ${name} already declared in scope ${this.scopeCounter}.`
 
       console.error(ErrorMessage)
       this.error.push(ErrorMessage)
@@ -244,7 +249,7 @@ class SemanticAnalyzer {
     }
   }
 
-  CalllookupInlookupInMemberTable(className, name) {
+  CalllookupInMemberTable(className, name) {
     const result = this.lookupInMemberTable(className, name)
     if (result) {
       return result
@@ -306,6 +311,52 @@ class SemanticAnalyzer {
       return null
     }
   }
+
+  typeCheckAssignment(operator, operandType) {
+    // Check if the operator and operand type are defined in the typeCheckInfo
+    if (
+      this.typeCheckInfo.assignment &&
+      this.typeCheckInfo.assignment[operandType] &&
+      this.typeCheckInfo.assignment[operandType][operator]
+    ) {
+      return this.typeCheckInfo.assignment[operandType][operator]
+    } else {
+      const ErrorMessage = `Error : Type mismatch: ${operator}${operandType}`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
+      return null
+    }
+  }
+
+  typeCheckArray(operator) {
+    // Check if the operator and operand type are defined in the typeCheckInfo
+    if (this.typeCheckInfo.array && this.typeCheckInfo.array[operator]) {
+      return this.typeCheckInfo.array[operator]
+    } else {
+      const ErrorMessage = `Error : Type mismatch: ${operator} `
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
+      return null
+    }
+  }
+
+  typeCheckObject(operator) {
+    // Check if the operator and operand type are defined in the typeCheckInfo
+    if (this.typeCheckInfo.object && this.typeCheckInfo.object[operator]) {
+      return this.typeCheckInfo.object[operator]
+    } else {
+      const ErrorMessage = `Error : Type mismatch: ${operator} `
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
+      return null
+    }
+  }
 }
 
 // Assume we have the following Java-like code
@@ -342,111 +393,6 @@ public class MainClass {
 const semanticAnalyzer = new SemanticAnalyzer()
 
 // Start semantic analysis
-semanticAnalyzer.createScopeTable()
 
-semanticAnalyzer.insertDataIntoMainTable(
-  "MyClass",
-  "Class",
-  "public",
-  null,
-  null
-)
-
-// const r = semanticAnalyzer.CalllookupInMainTable("MyClass")
-
-// const r4 = semanticAnalyzer.CalllookupInMainTable("MyAbstractClass")
-
-// console.log("lookup false", r4)
-
-// console.log("lookup", r)
-
-semanticAnalyzer.insertDataIntoMemberTable(
-  "MyClass",
-  "myAttribute",
-  "int",
-  "private",
-  null
-)
-
-semanticAnalyzer.insertDataIntoMemberTable(
-  "MyClass",
-  "myMethod",
-  "int",
-  "private",
-  null
-)
-
-// Analyze MainClass
-semanticAnalyzer.insertDataIntoMainTable(
-  "MainClass",
-  "Class",
-  "public",
-  null,
-  null
-)
-semanticAnalyzer.insertDataIntoMemberTable(
-  "MainClass",
-  "myAttribute",
-  "int",
-  "private",
-  null
-)
-
-semanticAnalyzer.insertDataIntoMemberTable(
-  "MainClass",
-  "myMethod",
-  "int",
-  "private",
-  null
-)
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("localVar", "int")
-semanticAnalyzer.insertDataIntoScopeTable("innerVar", "int")
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("floatVar", "float")
-
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("a", "int")
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("b", "int")
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("c", "float")
-
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("mainVar", "int")
-semanticAnalyzer.createScopeTable()
-semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
-
-// semanticAnalyzer.lookupInMemberTable("Animal", "c")
-const r1 = semanticAnalyzer.lookupInMainTable(
-  "Animal",
-  "Class",
-  "public",
-  null,
-  null
-)
-const r2 = semanticAnalyzer.lookupInScopeTable("Animal", 3)
-
-const resultTypeAddition = semanticAnalyzer.typeCheck("int", "+", "int")
-console.log("Result type for int + int:", resultTypeAddition) // Output: int
-
-const resultTypeAddition2 = semanticAnalyzer.typeCheck("int", "+", "float")
-console.log("Result type for int + float:", resultTypeAddition2) // Output: int
-
-const resultTypeSubtraction = semanticAnalyzer.typeCheck("float", "-", "int")
-console.log("Result type for float - int:", resultTypeSubtraction) // Output: float
-
-// const resultTypeDivision = semanticAnalyzer.typeCheck("int", "/", "string")
-// console.log("Result type for int / string:", resultTypeDivision) // Output: Type mismatch: int / string
-
-const resultTypeIncrement = semanticAnalyzer.typeCheckUnary("int", "++")
-console.log("Result type for ++int:", resultTypeIncrement) // Output: int
-
-const resultTypeInvalidIncrement = semanticAnalyzer.typeCheckUnary(
-  "string",
-  "++"
-)
 console.log("Result type for ++string:", resultTypeInvalidIncrement) // Output: Type mismatch: ++string
 console.log("End of Semantic Analysis.")

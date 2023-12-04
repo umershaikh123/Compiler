@@ -5,9 +5,9 @@ class Lexer {
     this.inputFilePath = inputFilePath
     this.outputFilePath = outputFilePath
     this.classification = {
-      DT: ["void", "int", "bool", "double", "char", "string"],
+      DT: ["void", "int", "bool", "float", "char", "string"],
 
-      WDT: ["Integer", "Boolean", "Character", "String", "Double"],
+      WDT: ["Integer", "Boolean", "Character", "String", "Float", "object"],
       implements: ["implements"],
       "=": ["="],
       RO: ["<", ">", "<=", ">=", "!=", "=="],
@@ -93,7 +93,7 @@ class Lexer {
       "int",
       "char",
       "string",
-      "double",
+      "float",
       "boolean",
       "new",
       "function",
