@@ -187,30 +187,6 @@ class SemanticAnalyzer {
     return true
   }
 
-  lookupInMainTable(name) {
-    return this.mainTable.find(entry => entry.Name === name)
-  }
-
-  lookupInMemberTable(className, name) {
-    const classEntry = this.lookupInMainTable(className)
-    if (!classEntry) {
-      const ErrorMessage = `undeclare Error Class ${className} not found.`
-
-      console.error(ErrorMessage)
-      this.error.push(ErrorMessage)
-
-      return false
-    }
-
-    const memberTable = classEntry.MemberTable
-    return memberTable.find(entry => entry.Name === name)
-  }
-
-  lookupInScopeTable(name, scope) {
-    return this.currentScopeTable.some(
-      entry => entry.Name === name && entry.Scope === scope
-    )
-  }
   insertDataIntoScopeTable(name, type) {
     const exists = this.lookupInScopeTable(name, this.scopeCounter)
     if (exists) {
@@ -231,6 +207,67 @@ class SemanticAnalyzer {
     return true
   }
 
+  lookupInMainTable(name) {
+    return this.mainTable.find(entry => entry.Name === name)
+  }
+
+  lookupInMemberTable(className, name) {
+    const classEntry = this.lookupInMainTable(className)
+    if (!classEntry) {
+      const ErrorMessage = `undeclared Error Class ${className} not found in Main Table.`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+
+      return false
+    }
+
+    const memberTable = classEntry.MemberTable
+    return memberTable.find(entry => entry.Name === name)
+  }
+
+  lookupInScopeTable(name, scope) {
+    return this.currentScopeTable.some(
+      entry => entry.Name === name && entry.Scope === scope
+    )
+  }
+
+  CalllookupInMainTable(name) {
+    const result = this.lookupInMainTable(name)
+    if (result) {
+      return result
+    } else {
+      const ErrorMessage = `Undeclare Error: ${name} does not exists in MainTable`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+    }
+  }
+
+  CalllookupInlookupInMemberTable(className, name) {
+    const result = this.lookupInMemberTable(className, name)
+    if (result) {
+      return result
+    } else {
+      const ErrorMessage = `Undeclared Error:  ${name} with ${className}   does not exists in Member Table`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+    }
+  }
+
+  CalllookupInScopeTable(name, scope) {
+    const result = this.lookupInScopeTable(name, scope)
+    if (result) {
+      return result
+    } else {
+      const ErrorMessage = `Undeclared Error: ${name} with  ${scope} does not exists in ScopeTable`
+
+      console.error(ErrorMessage)
+      this.error.push(ErrorMessage)
+    }
+  }
+
   typeCheck(leftOperandType, operator, rightOperandType) {
     // Check if the operator and operand types are defined in the typeCheckInfo
     if (
@@ -248,7 +285,7 @@ class SemanticAnalyzer {
       console.error(ErrorMessage)
       this.error.push(ErrorMessage)
 
-      return null // or throw an error, depending on your error handling strategy
+      return null
     }
   }
 
@@ -266,7 +303,7 @@ class SemanticAnalyzer {
       console.error(ErrorMessage)
       this.error.push(ErrorMessage)
 
-      return null // or throw an error, depending on your error handling strategy
+      return null
     }
   }
 }
@@ -314,6 +351,15 @@ semanticAnalyzer.insertDataIntoMainTable(
   null,
   null
 )
+
+// const r = semanticAnalyzer.CalllookupInMainTable("MyClass")
+
+// const r4 = semanticAnalyzer.CalllookupInMainTable("MyAbstractClass")
+
+// console.log("lookup false", r4)
+
+// console.log("lookup", r)
+
 semanticAnalyzer.insertDataIntoMemberTable(
   "MyClass",
   "myAttribute",
@@ -373,7 +419,7 @@ semanticAnalyzer.insertDataIntoScopeTable("mainVar", "int")
 semanticAnalyzer.createScopeTable()
 semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
 
-semanticAnalyzer.lookupInMemberTable("Animal", "c")
+// semanticAnalyzer.lookupInMemberTable("Animal", "c")
 const r1 = semanticAnalyzer.lookupInMainTable(
   "Animal",
   "Class",
@@ -383,74 +429,21 @@ const r1 = semanticAnalyzer.lookupInMainTable(
 )
 const r2 = semanticAnalyzer.lookupInScopeTable("Animal", 3)
 
-if (!r1) {
-  const ErrorMessage = `undeclare Error , entry in MainTable not found.`
-
-  console.error(ErrorMessage)
-  semanticAnalyzer.error.push(ErrorMessage)
-}
-
-if (!r2) {
-  const ErrorMessage = `undeclare Error , entry in ScopeTable not found.`
-
-  console.error(ErrorMessage)
-  semanticAnalyzer.error.push(ErrorMessage)
-}
-
-semanticAnalyzer.insertDataIntoMemberTable(
-  "fakeClass",
-  "myMethod",
-  "int",
-  "private",
-  null
-)
-// Log the results
-console.log("Main Table:")
-
-for (const entry of semanticAnalyzer.mainTable) {
-  console.log({
-    Name: entry.Name,
-    Type: entry.Type,
-    AccessModifier: entry.AccessModifier,
-    TypeModifier: entry.TypeModifier,
-    Parent: entry.Parent,
-    MemberTable: entry.MemberTable.map(member => ({
-      Name: member.Name,
-      Type: member.Type,
-      AccessModifier: member.AccessModifier,
-      TypeModifier: member.TypeModifier,
-    })),
-  })
-}
-console.log("Scope Table:")
-for (const entry of semanticAnalyzer.currentScopeTable) {
-  console.log({
-    Name: entry.Name,
-    Type: entry.Type,
-    Scope: entry.Scope,
-  })
-}
-
-// Example 1: Binary operation - Addition
 const resultTypeAddition = semanticAnalyzer.typeCheck("int", "+", "int")
 console.log("Result type for int + int:", resultTypeAddition) // Output: int
 
 const resultTypeAddition2 = semanticAnalyzer.typeCheck("int", "+", "float")
 console.log("Result type for int + float:", resultTypeAddition2) // Output: int
 
-// Example 2: Binary operation - Subtraction
 const resultTypeSubtraction = semanticAnalyzer.typeCheck("float", "-", "int")
 console.log("Result type for float - int:", resultTypeSubtraction) // Output: float
 
-// Example 3: Binary operation - Division (Type mismatch)
-const resultTypeDivision = semanticAnalyzer.typeCheck("int", "/", "string")
-console.log("Result type for int / string:", resultTypeDivision) // Output: Type mismatch: int / string
+// const resultTypeDivision = semanticAnalyzer.typeCheck("int", "/", "string")
+// console.log("Result type for int / string:", resultTypeDivision) // Output: Type mismatch: int / string
 
-// Example 4: Unary operation - Increment
 const resultTypeIncrement = semanticAnalyzer.typeCheckUnary("int", "++")
 console.log("Result type for ++int:", resultTypeIncrement) // Output: int
 
-// Example 5: Unary operation - Increment (Type mismatch)
 const resultTypeInvalidIncrement = semanticAnalyzer.typeCheckUnary(
   "string",
   "++"
