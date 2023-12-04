@@ -244,17 +244,17 @@ class SemanticAnalyzer {
     let currentScopeIndex = this.ScopeStack.indexOf(
       this.ScopeStack[this.ScopeStack.length - 1]
     )
-    console.log("Last value", currentScopeIndex)
+    // console.log("Last value", currentScopeIndex)
 
     while (currentScopeIndex >= 0) {
       const currentScope = this.ScopeStack[currentScopeIndex]
-      console.log("parent scope lookup", currentScope)
+      // console.log("parent scope lookup", currentScope)
       const isInCurrentScope = this.currentScopeTable.some(
         entry => entry.Name === name && entry.Scope === currentScope
       )
 
       if (isInCurrentScope) {
-        console.log("scope  Found")
+        // console.log("scope  Found")
         return this.currentScopeTable.some(
           entry => entry.Name === name && entry.Scope === currentScope
         )
@@ -386,6 +386,29 @@ class SemanticAnalyzer {
   }
 }
 
+function extractFunctionTypes(row) {
+  const typeString = row.Type
+
+  // If the typeString contains '->', it's a function type
+  if (typeString.includes("->")) {
+    const [parameterTypes, returnType] = typeString.split(" -> ")
+
+    // Split the parameter types by comma
+    const parameters = parameterTypes.split(",").map(type => type.trim())
+
+    return {
+      parameters,
+      returnType,
+    }
+  }
+
+  // If there's no '->', it's not a function type
+  return {
+    parameters: [],
+    returnType: typeString.trim(),
+  }
+}
+
 const semanticAnalyzer = new SemanticAnalyzer()
 
 semanticAnalyzer.createScope()
@@ -482,10 +505,15 @@ semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
 semanticAnalyzer.DestroyScope()
 semanticAnalyzer.DestroyScope()
 semanticAnalyzer.DestroyScope()
-semanticAnalyzer.DestroyScope()
-semanticAnalyzer.CalllookupInScopeTable("a")
+// semanticAnalyzer.DestroyScope()
+// semanticAnalyzer.CalllookupInScopeTable("a")
 
-console.log(" current scope ", semanticAnalyzer.scopeCounter)
+const r = semanticAnalyzer.CalllookupInMemberTable("MyClass", "myFunction")
+
+console.log("  r ", r)
 console.log(" scope stack", semanticAnalyzer.ScopeStack)
 
 console.log("End of Semantic Analysis.")
+
+// const functionTypes = extractFunctionTypes(r)
+// console.log(functionTypes)
