@@ -1047,7 +1047,7 @@ const tokens = tokenData
 let tokenIndex = 0
 
 console.log("tokens ", tokens)
-// console.log("tokens[0].classpart", tokens[0].classpart)
+
 function parseNonTerminal(nonTerminal) {
   console.log(`Parsing non-terminal: ${nonTerminal}`)
   const productionRule = Grammar[nonTerminal]
@@ -1067,37 +1067,24 @@ function parseNonTerminal(nonTerminal) {
           console.log("valuePart", valuePart)
           if (valuePart !== null) {
             // Store value part for the non-terminal
-            // parameterValues[symbol] = valuePart
+
             if (parameterValues[symbol]) {
               parameterValues[symbol].push(valuePart)
             } else {
               parameterValues[symbol] = [valuePart]
             }
-            // parameterValues[symbol] = parameterValues[symbol] || []
-            // parameterValues[symbol].push(valuePart)
           }
           if (!parseNonTerminal(symbol)) {
             failed = true
-            // const valuePart = parseNonTerminalValue(symbol)
-            // console.log("valuePart", valuePart)
-            // if (valuePart !== null) {
-            //   // Store value part for the non-terminal
-            //   parameterValues[symbol] = valuePart
-            // }
+
             break
           }
-
-          // Example: Call a semantic function based on non-terminal
         } else if (symbol !== "null") {
           // It's a terminal
           const currentToken = tokens[tokenIndex]
           console.log("currentToken", currentToken)
           if (currentToken && currentToken.classpart === symbol) {
-            //   console.log("currentToken.classpart", currentToken.classpart)
             const terminalValue = currentToken.valuepart
-            // parameterValues[symbol] = terminalValue
-            // parameterValues[symbol] = parameterValues[symbol] || []
-            // parameterValues[symbol].push(terminalValue)
 
             if (parameterValues[symbol]) {
               parameterValues[symbol].push(terminalValue)
@@ -1128,27 +1115,17 @@ function parseNonTerminal(nonTerminal) {
 }
 
 function parseNonTerminalValue(nonTerminal) {
-  // Example: Parse the value part for a non-terminal
   const currentToken = tokens[tokenIndex]
   console.log("nonTerminal", nonTerminal)
 
   if (currentToken) {
-    // Adjust this based on your token structure
-
     return currentToken.valuepart
   }
   return null
 }
 
-// Name: name,
-// Type: type,
-// AccessModifier: accessModifier,
-// TypeModifier: typeModifier,
-// Parent: parent,
-// Inherit : interface or class
-// Interfaces : ?
 function callSemanticFunction(nonTerminal, parameterValues) {
-  // Example: Call semantic function based on non-terminal and parameter values
+  // @dev Call semantic function based on non-terminal and parameter values
   if (nonTerminal === "<ClassDecl>") {
     nonTerminal = "<ClassAccMod>"
     if (nonTerminal === "<ClassAccMod>") {
@@ -1158,8 +1135,9 @@ function callSemanticFunction(nonTerminal, parameterValues) {
       if (nonTerminal === "<ClassNonAccMod>") {
         const typeModifier = parameterValues[nonTerminal]
         const type = "class"
-        const Name = parameterValues["ID"] // get token value part of ID
+        const Name = parameterValues["ID"]
 
+        // @dev can't store ID as key because they are multiple IDs
         nonTerminal = "<Extra>"
         if (nonTerminal === "<Extra>") {
           const parent = ID
@@ -1193,8 +1171,5 @@ function parse() {
   }
 }
 
-// Start parsing
-
-// Usage
-
+// Syntax Analyzer
 parse()

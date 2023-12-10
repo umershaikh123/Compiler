@@ -608,3 +608,11 @@ console.log("End of Semantic Analysis.")
 
 const functionTypes = extractFunctionTypes(r)
 console.log(functionTypes)
+
+{
+  /* <ClassDecl> -> <ClassAccMod>[AM = ClassAccMod.synthezied ] <ClassNonAccMod>  
+
+[TM = ClassNonAccMod.synthezied] "class" [Type = “class”] ID [N=TS[index].Value] <Extra>[ [Parent = parent.synthesized] 
+
+InsertDataIntoMainTable( N , “class” , AM , TM , Parent  )   */
+}
