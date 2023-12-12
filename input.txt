@@ -1,6 +1,11 @@
-public abstract class Person extends employee {
+
+public class shapes  {
  
-
-
+public Static int[] arr = new int[0];
+   public Static main() {
+      public int a,b,d,c,d;
+   }
 }
+
+
 

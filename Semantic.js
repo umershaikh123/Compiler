@@ -521,84 +521,13 @@ semanticAnalyzer.DestroyScope()
 
 semanticAnalyzer.insertDataIntoScopeTable("innerMainVar", "int")
 semanticAnalyzer.DestroyScope()
-semanticAnalyzer.DestroyScope()
-semanticAnalyzer.DestroyScope()
-
-// Define an interface
-semanticAnalyzer.insertDataIntoMainTable(
-  "Shape",
-  "interface",
-  "public",
-  null,
-  null
-)
-
-semanticAnalyzer.insertDataIntoMemberTable(
-  "Shape",
-  "calculateArea",
-  ["void , double"],
-  "public",
-  "abstract"
-)
-semanticAnalyzer.insertDataIntoMemberTable(
-  "Shape",
-  "getColor",
-  ["void", "string"],
-  "public",
-  "abstract"
-)
 
 semanticAnalyzer.insertDataIntoMainTable("Circle", "class", "public", null, [
   "Shape",
 ])
-semanticAnalyzer.insertDataIntoMemberTable(
-  "Circle",
-  "calculateArea",
-  ["void", "double"],
-  "public",
-  null
-)
-semanticAnalyzer.insertDataIntoMemberTable(
-  "Circle",
-  "getColor",
-  ["void", "string"],
-  "public",
-  null
-)
 
-semanticAnalyzer.insertDataIntoMainTable(
-  "Vehicle",
-  "abstract class",
-  "public",
-  null,
-  null
-)
+semanticAnalyzer.createScope()
 
-semanticAnalyzer.insertDataIntoMemberTable(
-  "Vehicle",
-  "startEngine",
-  ["void", "void"],
-  "public",
-  "abstract"
-)
-semanticAnalyzer.insertDataIntoMemberTable(
-  "Vehicle",
-  "stopEngine",
-  ["void", "void"],
-  "public",
-  null
-)
-
-semanticAnalyzer.insertDataIntoMainTable("Car", "class", "public", null, [
-  "Vehicle",
-])
-semanticAnalyzer.insertDataIntoMemberTable(
-  "Car",
-  "startEngine",
-  ["void", "void"],
-  "public",
-  null
-)
 const r = semanticAnalyzer.CalllookupInMemberTable("MyClass", "myAttribute")
 
 console.log("  r ", r)
@@ -608,11 +537,3 @@ console.log("End of Semantic Analysis.")
 
 const functionTypes = extractFunctionTypes(r)
 console.log(functionTypes)
-
-{
-  /* <ClassDecl> -> <ClassAccMod>[AM = ClassAccMod.synthezied ] <ClassNonAccMod>  
-
-[TM = ClassNonAccMod.synthezied] "class" [Type = “class”] ID [N=TS[index].Value] <Extra>[ [Parent = parent.synthesized] 
-
-InsertDataIntoMainTable( N , “class” , AM , TM , Parent  )   */
-}
